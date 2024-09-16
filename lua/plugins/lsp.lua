@@ -2,13 +2,16 @@ return {
   {
     "neovim/nvim-lspconfig",
     opts = {
-      servers = { eslint = {} },
+      servers = {
+        eslint = {},
+        ts_ls = { enabled = false },
+      },
       setup = {
         eslint = function()
           require("lazyvim.util").lsp.on_attach(function(client)
             if client.name == "eslint" then
               client.server_capabilities.documentFormattingProvider = true
-            elseif client.name == "ts_ls" or client.name == "vtsls" then
+            elseif client.name == "tsserver" or client.name == "ts_ls" or client.name == "vtsls" then
               client.server_capabilities.documentFormattingProvider = false
             end
           end)
