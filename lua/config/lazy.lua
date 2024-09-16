@@ -23,6 +23,7 @@ require("lazy").setup({
 
     -- Languages
     { import = "lazyvim.plugins.extras.lang.typescript" },
+    { import = "lazyvim.plugins.extras.lang.elm" },
     -- java
     { import = "lazyvim.plugins.extras.lang.java" },
     -- python

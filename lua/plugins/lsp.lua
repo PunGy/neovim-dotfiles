@@ -8,7 +8,7 @@ return {
           require("lazyvim.util").lsp.on_attach(function(client)
             if client.name == "eslint" then
               client.server_capabilities.documentFormattingProvider = true
-            elseif client.name == "tsserver" or client.name == "vtsls" then
+            elseif client.name == "ts_ls" or client.name == "vtsls" then
               client.server_capabilities.documentFormattingProvider = false
             end
           end)
@@ -18,11 +18,11 @@ return {
   },
   {
     "stevearc/conform.nvim",
-    -- opts = {
-    --   formatters_by_ft = {
-    --     typescript = { "eslint" },
-    --   },
-    -- },
+    opts = {
+      formatters_by_ft = {
+        elm = { "elm_format" },
+      },
+    },
   },
   {
     "williamboman/mason.nvim",
