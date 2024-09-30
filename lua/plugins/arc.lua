@@ -17,6 +17,7 @@ function isdir(path)
 end
 
 if isdir(os.getenv("HOME") .. "/arcadia/devtools") then
+  -- return { dir = "~/arcadia/junk/a-matveev9/gitsigns.arc.nvim" }
   return {
     dir = "~/arcadia/devtools/vim/plugin_bundles/signify",
     keys = {

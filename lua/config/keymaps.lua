@@ -20,3 +20,11 @@ keymap.set("n", "ss", ":split<Return>", opts)
 keymap.set("n", "sv", ":vsplit<Return>", opts)
 
 keymap.set("n", "<leader>h", vim.cmd.UndotreeToggle)
+
+keymap.set("n", "<leader>bc", function()
+  local abs_path = vim.fn.expand("%:p")
+
+  local relative_buf_path = vim.fn.fnamemodify(abs_path, ":~:.")
+
+  vim.fn.setreg("+", relative_buf_path)
+end)

@@ -17,6 +17,11 @@ return {
           end)
         end,
       },
+
+      inlay_hints = {
+        enabled = false,
+        exclude = { "vue" },
+      },
     },
   },
   {
