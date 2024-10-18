@@ -21,6 +21,9 @@ keymap.set("n", "sv", ":vsplit<Return>", opts)
 
 keymap.set("n", "<leader>h", vim.cmd.UndotreeToggle)
 
+-- buffers
+keymap.set("n", "<C-x>", LazyVim.ui.bufremove)
+
 keymap.set("n", "<leader>bn", function()
   local bufname = vim.fn.fnamemodify(vim.fn.expand("%:p"), ":t")
 

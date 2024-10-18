@@ -22,7 +22,7 @@ if isdir(os.getenv("HOME") .. "/arcadia/devtools") then
     dir = "~/arcadia/devtools/vim/plugin_bundles/signify",
     keys = {
       { "<leader>ga", desc = "Arcadia Signify" },
-      { "<leader>gad", "<cmd>SignifyDiff<CR>", desc = "Show signify diff tab" },
+      { "<leader>gd", "<cmd>SignifyDiff<CR>", desc = "Show signify diff tab" },
       { "<leader>gan", "<cmd>SignifyEnable<CR>", desc = "Set signify oN" },
       { "<leader>gaf", "<cmd>SignifyDisable<CR>", desc = "Set signify ofF" },
     },

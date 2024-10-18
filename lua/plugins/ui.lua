@@ -99,9 +99,6 @@ return {
   -- bufferline --
   {
     "akinsho/bufferline.nvim",
-    keys = {
-      { "<C-x>", "<Cmd>bdelete<CR>", desc = "Delete buffer" },
-    },
   },
 
   -- neo tree
