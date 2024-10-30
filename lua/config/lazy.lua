@@ -16,6 +16,9 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.util.mini-hipatterns" },
     { import = "lazyvim.plugins.extras.dap.core" },
 
+    -- Tools
+    { import = "lazyvim.plugins.extras.coding.mini-surround" },
+
     -- WEB
     { import = "lazyvim.plugins.extras.linting.eslint" },
     -- { import = "lazyvim.plugins.extras.linting.prettier" },
