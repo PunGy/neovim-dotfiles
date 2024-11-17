@@ -19,10 +19,22 @@
 
 ;; Buffer management
 (map! [n] :<C-q> close-buffer "Close buffer gracefully")
+(map! [n] :<C-b>q close-buffer "Close buffer gracefully")
 
 ;;(map! [n] :<S-h> (cmd$ :bprev))
 ;;(map! [n] :<S-l> (cmd$ :bnext))
 (map! [ni] :<C-b>p (cmd$ :BufferLineTogglePin) "Pin buffer")
+(map! [ni] :<C-b>cn (fn []
+                      (let [bufname (vim.fn.fnamemodify (vim.fn.expand "%:p")
+                                                        ":t")]
+                        (vim.fn.setreg "+" bufname)))
+      "Copy buffer name")
+
+(map! [ni] :<C-b>cp (fn []
+                      (let [cwd-path (vim.fn.fnamemodify (vim.fn.expand "%:p")
+                                                         ":~:.")]
+                        (vim.fn.setreg "+" cwd-path)))
+      "Copy buffer path")
 
 (import-macros {: map! : set!} :hibiscus.vim)
 (import-macros {: cmd$ : plug$ : plug!} :utils.macros)
