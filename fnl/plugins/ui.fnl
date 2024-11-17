@@ -55,21 +55,28 @@
  ;; Workspace UI
  {1 :akinsho/bufferline.nvim
   :dependencies [:nvim-tree/nvim-web-devicons]
-  :opts {:options {:diagnostics :nvim_lsp}}
+  :opts {:options {:diagnostics :nvim_lsp
+                   :show_buffer_close_icons false
+                   ;:groups {:items [((. (require :bufferline.groups) :builtin
+                   ;                     :pinned ):with {:icon "󰐃 "})]}
+                   }}
   :config (fn [_ opts]
-            (plug! :bufferline :setup opts))}
+            (local bufferline (require :bufferline))
+            (bufferline.setup opts))}
  ;; Theme
  {1 :rebelot/kanagawa.nvim
   :lazy false
   :init (fn [] (exec! [colorscheme kanagawa]))
-  :opts {:overrides (fn [colors]
+  :opts {:commentStyle {:italic false}
+         :overrides (fn [colors]
                       (local {: palette :theme {: ui}} colors)
                       {:NeoTreeNormal {:fg ui.fg :bg ui.float.bg}
                        :NeoTreeFloatBorder {:fg ui.float.bg :bg ui.float.bg}
                        :DashboardHeader {:fg palette.oniViolet}
                        :DashboardShortCut {:fg palette.oniViolet}
                        :DashboardKey {:fg palette.samuraiRed}
-                       :WhichKeyIconGrey {:fg "#000000"}})}}
+                       :WhichKeySeparator {:fg palette.katanaGray
+                                           :italic false}})}}
  ;; Search and replace
  {1 :MagicDuck/grug-far.nvim
   :config (fn [] (plug! :grug-far :setup {:headerMaxWidth 80}))}

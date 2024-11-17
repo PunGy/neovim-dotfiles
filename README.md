@@ -11,11 +11,15 @@ My configuration of NeoVim IDE using Fennel language.
   - rg - better `grep`
   - bat - better `cat`
   - chafa - image previewer
+- Nerd font
+- Kitty or WezTerm
 
 ## Core plugins
 
-- **Fennel** - [tangerine](https://github.com/udayvir-singh/tangerine.nvim) + [hibiscus.nvim](https://github.com/udayvir-singh/hibiscus.nvim)
-- **Code** - lsp + mason + treesitter
+- **Fennel building** - [tangerine](https://github.com/udayvir-singh/tangerine.nvim) + [hibiscus.nvim](https://github.com/udayvir-singh/hibiscus.nvim)
+- **Theme** - [Kanagawa](https://github.com/rebelot/kanagawa.nvim/tree/master)
+- **Navigation** - [Fzf-lua](https://github.com/ibhagwan/fzf-lua)
+- **Explorer** - [NeoTree](https://github.com/nvim-neo-tree/neo-tree.nvim)
 
 ## Installation
 
@@ -24,4 +28,6 @@ My configuration of NeoVim IDE using Fennel language.
 3. Open nvim
 
 ### Screenshots
+
+WIP
 

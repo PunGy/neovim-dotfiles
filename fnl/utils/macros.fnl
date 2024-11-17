@@ -5,12 +5,13 @@
   `((. (require ,plugin) ,cmd) ,opts))
 
 ;; Create a handler which executes a command
-(fn plug$ [plugin cmd opts]
-  `(fn [] ((. (require ,plugin) ,cmd) ,opts)))
+(fn plug$ [plugin cmd & opts]
+  `(fn [] ((. (require ,plugin) ,cmd) ,(unpack opts))))
 
 ;; create a handler for executing vim command
 (fn cmd$ [cmd]
   (values (.. "<cmd>" cmd "<cr>")))
+
 
 
 {: plug! : plug$ : cmd$}

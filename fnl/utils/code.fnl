@@ -3,4 +3,5 @@
         severity (or (and ?severity (. vim.diagnostic.severity ?severity)) nil)]
     (fn [] (go {: severity}))))
 
+
 { : diagnostic-goto }

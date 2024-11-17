@@ -1,11 +1,6 @@
 (import-macros {: plug!} :utils.macros)
-
-(fn current-buffer []
-  (vim.api.nvim_get_current_buf))
-
-(fn delete-buffer [buf]
-  (when (vim.api.nvim_buf_is_valid buf)
-    (pcall vim.cmd (.. "bdelete! " buf))))
+(local {: delete-buffer : current-buffer} (require :utils.vim))
+(local {: find} (require :utils.fn))
 
 (fn close-buffer [buf?]
   (local {: nvim_win_set_buf
@@ -15,6 +10,8 @@
           : nvim_create_buf} vim.api)
   (local {: confirm : win_findbuf : buflisted : bufname : bufnr} vim.fn)
   (local buf (or buf? (current-buffer)))
+  (local buf-elem (find (. (plug! :bufferline :get_elements) :elements)
+                        #(= (. $1 :id) buf)))
 
   (fn arrange-for-windows []
     (each [_ win (ipairs (win_findbuf buf))]
@@ -30,7 +27,9 @@
                                     (let [new-buf (nvim_create_buf true false)]
                                       (nvim_win_set_buf win new-buf))))))))))
 
-  (if vim.bo.modified
+  (if (plug! :bufferline.groups :_is_pinned buf-elem)
+      (print "Cannot remove pinned buffer! Unpin it first.")
+      vim.bo.modified
       (let [choice (confirm (.. "Save changes to " (bufname))
                             "&Yes\n&No\nCancel")]
         (when (= choice 1)

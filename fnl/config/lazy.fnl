@@ -24,25 +24,6 @@
 
 (vim.opt.rtp:prepend lazypath)
 
-(plug! :lazy :setup
-       {:checker {:enabled false}
-        :spec [{:import :plugins}]
-        :rocks {:hererocks true}
-        :icons {:cmd " "
-                :config ""
-                :event " "
-                :favorite " "
-                :ft " "
-                :init " "
-                :import " "
-                :keys " "
-                :lazy "󰒲 "
-                :loaded "●"
-                :not_loaded "○"
-                :plugin " "
-                :runtime " "
-                :require "󰢱 "
-                :source " "
-                :start " "
-                :task "✔ "
-                :list ["●" ">" "★" "‒"]}})
+(plug! :lazy :setup {:checker {:enabled false}
+                     :spec [{:import :plugins}]
+                     :rocks {:hererocks true}})

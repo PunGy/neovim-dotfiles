@@ -1,7 +1,7 @@
 (import-macros {: map! : set!} :hibiscus.vim)
 (import-macros {: cmd$ : plug$ : plug!} :utils.macros)
 (local {: close-buffer : file-explorer} (require :utils.ui))
-(local {: diagnostic-goto} (require :utils.code))
+(local {: diagnostic-goto : cmd$0} (require :utils.code))
 
 ;;;;;;;;;;;;
 ;; SYSTEM
@@ -17,10 +17,17 @@
 (map! [nv] :<C-p> "\"+p" "System clipboard paste")
 (map! [nv] :<C-S-p> "\"+P" "System clipboard paste")
 
+;; Buffer management
 (map! [n] :<C-q> close-buffer "Close buffer gracefully")
 
 (map! [n] :<S-h> (cmd$ :bprev))
 (map! [n] :<S-l> (cmd$ :bnext))
+(map! [ni] :<C-b>p (cmd$ :BufferLineTogglePin) "Pin buffer")
+
+(for [i 1 9]
+  (map! [ni] (.. :<C-b> i) (plug$ :bufferline :go_to i true)) (.. "Go to buffer " i))
+(map! [ni] :<C-b>$ (cmd$ "BufferLineGoToBuffer -1") "Go to last tab")
+(map! [ni] :<C-b>o (cmd$ "BufferLineGroupClose ungrouped") "Close non-pinned buffers")
 
 ;; clear search
 (map! [ni] :<esc> :<cmd>noh<cr><esc>)
