@@ -1,0 +1,53 @@
+(import-macros {: map!} :hibiscus.vim)
+(import-macros {: cmd$} :utils.macros)
+(local {: is-dir} (require :utils.system))
+
+;; Common gitsigns config
+(local gitsigns-opts
+       {:signs {:add {:text "▎"}
+                :change {:text "▎"}
+                :delete {:text ""}
+                :topdelete {:text ""}
+                :changedelete {:text "▎"}
+                :untracked {:text "▎"}}
+        :numhl true
+        :current_line_blame true
+        :current_line_blame_opts {:virt_text true
+                                  :virt_text_pos :eol
+                                  :delay 500
+                                  :ignore_whitespace false
+                                  :virt_text_priority 100}
+        :on_attach (fn [bufnr]
+                     (local gs (require :gitsigns))
+                     (map! [n :buffer] "]h" #(gs.nav_hunk :next) "Next hunk")
+                     (map! [n :buffer] "[h" #(gs.nav_hunk :prev) "Prev hunk")
+                     (map! [nv :buffer] :<leader>vs
+                           (cmd$ ":Gitsigns stage_hunk") "Stage Hunk")
+                     (map! [nv :buffer] :<leader>vr
+                           (cmd$ ":Gitsigns reset_hunk") "Reset Hunk")
+                     (map! [n :buffer] :<leader>vS gs.stage_buffer
+                           "Stage Buffer")
+                     (map! [n :buffer] :<leader>vu gs.undo_stage_hunk
+                           "Undo Stage Hunk")
+                     (map! [n :buffer] :<leader>vR gs.reset_buffer
+                           "Reset Buffer")
+                     (map! [n :buffer] :<leader>vp gs.preview_hunk_inline
+                           "Preview Hunk Inline")
+                     (map! [n :buffer] :<leader>vb
+                           #(gs.blame_line {:full true}) "Blame Line")
+                     (map! [n :buffer] :<leader>vB #(gs.blame) "Blame Buffer")
+                     (map! [n :buffer] :<leader>vd gs.diffthis "Diff This")
+                     (map! [n :buffer] :<leader>vD #(gs.diffthis "~")
+                           "Diff This ~")
+                     (map! [ox :buffer] :ih (cmd$ ":<C-U>Gitsigns select_hunk")
+                           "GitSigns Select Hunk"))})
+
+;; IF arcadia mounted AND we are inside mounted instance - load arc vcs
+(if (and (is-dir (.. (os.getenv :HOME) :/arcadia/devtools))
+         (: (vim.fn.getcwd) :match :arcadia))
+    ;; Patched gitsigns for arc vcs
+    {:dir "~/arcadia/contrib/tier1/gitsigns.arc.nvim"
+     :dev true
+     :opts gitsigns-opts}
+    ;; Plain gitsigns
+    {1 :lewis6991/gitsigns.nvim :opts gitsigns-opts})

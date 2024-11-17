@@ -20,14 +20,18 @@
 ;; Buffer management
 (map! [n] :<C-q> close-buffer "Close buffer gracefully")
 
-(map! [n] :<S-h> (cmd$ :bprev))
-(map! [n] :<S-l> (cmd$ :bnext))
+;;(map! [n] :<S-h> (cmd$ :bprev))
+;;(map! [n] :<S-l> (cmd$ :bnext))
 (map! [ni] :<C-b>p (cmd$ :BufferLineTogglePin) "Pin buffer")
 
-(for [i 1 9]
-  (map! [ni] (.. :<C-b> i) (plug$ :bufferline :go_to i true)) (.. "Go to buffer " i))
+(import-macros {: map! : set!} :hibiscus.vim)
+(import-macros {: cmd$ : plug$ : plug!} :utils.macros)
+(for [i 1 4]
+  (map! [ni] (.. :<C-b> i) (plug$ :bufferline :go_to i true) "Go to buffer"))
+
 (map! [ni] :<C-b>$ (cmd$ "BufferLineGoToBuffer -1") "Go to last tab")
-(map! [ni] :<C-b>o (cmd$ "BufferLineGroupClose ungrouped") "Close non-pinned buffers")
+(map! [ni] :<C-b>o (cmd$ "BufferLineGroupClose ungrouped")
+      "Close non-pinned buffers")
 
 ;; clear search
 (map! [ni] :<esc> :<cmd>noh<cr><esc>)
