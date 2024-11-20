@@ -1,6 +1,6 @@
 (import-macros {: map! : exec!} :hibiscus.vim)
 (import-macros {: plug! : plug$ : cmd$} :utils.macros)
-(local {: file-explorer} (require :utils.ui))
+(local {: file-explorer : close-buffer} (require :utils.ui))
 
 (local lain
        ["⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠋⣉⣢⣤⣤⣤⣤⣴⣶⣤⣤⣄⣈⠙⠛⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"
@@ -57,6 +57,7 @@
   :dependencies [:nvim-tree/nvim-web-devicons]
   :opts {:options {:diagnostics :nvim_lsp
                    :show_buffer_close_icons false
+                   :close_command #(close-buffer $1 {:silent true})
                    ;:groups {:items [((. (require :bufferline.groups) :builtin
                    ;                     :pinned ):with {:icon "󰐃 "})]}
                    }}

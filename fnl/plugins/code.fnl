@@ -108,6 +108,8 @@
   :opts {:ensure_installed [;; general
                             :shellcheck
                             :haskell-language-server
+                            ;; Note taking
+                            ;:zk
                             ;; lua
                             :stylua
                             :selene

@@ -1,6 +1,6 @@
 (import-macros {: map! : set!} :hibiscus.vim)
 (import-macros {: cmd$ : plug$ : plug!} :utils.macros)
-(local {: close-buffer : file-explorer} (require :utils.ui))
+(local {: close-buffer : file-explorer : unpin-all} (require :utils.ui))
 (local {: diagnostic-goto : cmd$0} (require :utils.code))
 
 ;;;;;;;;;;;;
@@ -9,6 +9,8 @@
 
 ;; Select all
 (map! [n] :<C-a> :gg<S-v>G)
+;; Select line without new line symbol
+(map! [n :remap] :<A-v> :_v$h)
 ;; Save on shortcut
 (map! [nixs] :<C-s> :<cmd>w<CR><esc>)
 
@@ -18,7 +20,6 @@
 (map! [nv] :<C-S-p> "\"+P" "System clipboard paste")
 
 ;; Buffer management
-(map! [n] :<C-q> close-buffer "Close buffer gracefully")
 (map! [n] :<C-b>q close-buffer "Close buffer gracefully")
 
 ;;(map! [n] :<S-h> (cmd$ :bprev))
@@ -42,13 +43,12 @@
   (map! [ni] (.. :<C-b> i) (plug$ :bufferline :go_to i true) "Go to buffer"))
 
 (map! [ni] :<C-b>$ (cmd$ "BufferLineGoToBuffer -1") "Go to last tab")
-(map! [ni] :<C-b>o (cmd$ "BufferLineGroupClose ungrouped")
-      "Close non-pinned buffers")
+(map! [ni] :<C-b>o (cmd$ "BufferLineCloseOthers")
+      "Close other buffers")
+(map! [n] :<C-b>u unpin-all "Unpin all buffers")
 
 ;; clear search
 (map! [ni] :<esc> :<cmd>noh<cr><esc>)
-
-(map! [n :remap] :<A-v> :_v$h)
 
 ;; diagnostics navigatoin
 (map! [n] :<leader>cd vim.diagnostic.open_float "Line Diagnostics")
@@ -93,6 +93,9 @@
 
 (map! [n] :<leader>ul (fn [] (set! relativenumber!)) "Toggle relative lines")
 
+(map! [n] :<leader>um (cmd$ ":RenderMarkdown toggle") "Toggle in-editor markdown preview")
+(map! [n] :<leader>uM (cmd$ ":MarkdownPreviewToggle") "Toggle external markdown preview")
+
 ;; LSP Keymaps
 (map! [n] :gd (cmd$ "FzfLua lsp_definitions") "Go to definition")
 (map! [n] :gD (cmd$ "FzfLua lsp_declarations") "Go to declaration")
@@ -124,5 +127,5 @@
 (map! [n] :<leader>sw (cmd$ "FzfLua lsp_workspace_symbols")
       "Search for a symbol in project")
 
-(map! [n] :<leader>sg (cmd$ "FzfLua live_grep") "Grep project")
+(map! [n] :<leader>sg (cmd$ "FzfLua live_grep_glob") "Grep project")
 (map! [n] :<leader>/ (cmd$ "FzfLua blines") "Search here")
