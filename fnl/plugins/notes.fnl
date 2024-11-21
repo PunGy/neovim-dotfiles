@@ -7,8 +7,11 @@
     (vim.api.nvim_put [timestamp] :c true true)))
 
 (fn make-list [type]
+  (local list-str "- [ ] ")
   (if (= type :new-list)
-      (vim.api.nvim_put ["- [ ] "] :l true true)))
+      (let [[current-line] (vim.api.nvim_win_get_cursor 0)] 
+        (vim.api.nvim_put [list-str] :l true true)
+        (vim.api.nvim_win_set_cursor 0 [(+ current-line 1) (# list-str)]))))
 
 (macro zkcmd! [cmd opts]
   `(((. (require :zk.commands) :get) ,cmd) ,opts))
