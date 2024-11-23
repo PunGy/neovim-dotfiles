@@ -10,16 +10,27 @@ My configuration of NeoVim IDE using Fennel language.
   - fd - better `find`
   - rg - better `grep`
   - bat - better `cat`
-  - chafa - image previewer
+  - chafa - image previewer (optional)
 - Nerd font
 - Kitty or WezTerm
+
+
+For personal wiki:
+- zk - tool for maintaining personal wiki
+- imagemagick - image previewer
+- pngpaste - image paster
+- pylatexnc - latex support
 
 ## Core plugins
 
 - **Fennel building** - [tangerine](https://github.com/udayvir-singh/tangerine.nvim) + [hibiscus.nvim](https://github.com/udayvir-singh/hibiscus.nvim)
-- **Theme** - [Kanagawa](https://github.com/rebelot/kanagawa.nvim/tree/master)
-- **Navigation** - [Fzf-lua](https://github.com/ibhagwan/fzf-lua)
-- **Explorer** - [NeoTree](https://github.com/nvim-neo-tree/neo-tree.nvim)
+- **UI**:
+    - **Theme** - [Kanagawa](https://github.com/rebelot/kanagawa.nvim/tree/master)
+    - **Navigation** - [Fzf-lua](https://github.com/ibhagwan/fzf-lua)
+    - **Explorer** - [NeoTree](https://github.com/nvim-neo-tree/neo-tree.nvim)
+    - **Buffer management** - [Bufferline](https://github.com/akinsho/bufferline.nvim)
+    - **Dashboard** - [dashboard.nvim](https://github.com/nvimdev/dashboard-nvim)
+- TODO: describe other plugins and their need
 
 ## Installation
 
@@ -29,5 +40,14 @@ My configuration of NeoVim IDE using Fennel language.
 
 ### Screenshots
 
-WIP
+| Dashboard |
+|-------|
+| ![dashboard](./assets/dashboard.png) |
 
+| File explorer | Buffer explorer |
+|-------|----|
+| ![file](./assets/file-explorer.png) | ![file](./assets/exploring-buffers.png) |
+
+| Workspace |
+|-------|
+| ![workspace](./assets/workspace.png) |

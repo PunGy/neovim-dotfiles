@@ -32,7 +32,8 @@
                                                 true))}
                      :ts_ls {:on_attach (fn [client]
                                           (set client.server_capabilities.documentFormattingProvider
-                                               false))}}
+                                               false))
+                             :init_options {:importModuleSpecifierPreference :relative}}}
            :setup {}})
   ;; Almost entirely copied form LazyVim - refactor to be more simple and lispy
   :config (fn [_ opts]

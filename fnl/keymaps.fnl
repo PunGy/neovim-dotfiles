@@ -19,6 +19,8 @@
 (map! [nv] :<C-p> "\"+p" "System clipboard paste")
 (map! [nv] :<C-S-p> "\"+P" "System clipboard paste")
 
+(map! [ni] :<C-i>p (cmd$ :PasteImage) "Paste image from system clipboard")
+
 ;; Buffer management
 (map! [n] :<C-b>q close-buffer "Close buffer gracefully")
 
@@ -123,9 +125,12 @@
 (map! [n] :<leader>fb (cmd$ "FzfLua buffers") "Find buffers")
 (map! [n] :<leader>ss (cmd$ "FzfLua lsp_document_symbols")
       "Search for a symbol here")
+(map! [n] :<leader>sb (cmd$ "FzfLua lines") "Search in buffes")
 
 (map! [n] :<leader>sw (cmd$ "FzfLua lsp_workspace_symbols")
       "Search for a symbol in project")
 
 (map! [n] :<leader>sg (cmd$ "FzfLua live_grep_glob") "Grep project")
 (map! [n] :<leader>/ (cmd$ "FzfLua blines") "Search here")
+
+

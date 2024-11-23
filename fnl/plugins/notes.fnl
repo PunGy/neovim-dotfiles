@@ -9,9 +9,9 @@
 (fn make-list [type]
   (local list-str "- [ ] ")
   (if (= type :new-list)
-      (let [[current-line] (vim.api.nvim_win_get_cursor 0)] 
+      (let [[current-line] (vim.api.nvim_win_get_cursor 0)]
         (vim.api.nvim_put [list-str] :l true true)
-        (vim.api.nvim_win_set_cursor 0 [(+ current-line 1) (# list-str)]))))
+        (vim.api.nvim_win_set_cursor 0 [(+ current-line 1) (length list-str)]))))
 
 (macro zkcmd! [cmd opts]
   `(((. (require :zk.commands) :get) ,cmd) ,opts))
@@ -34,5 +34,9 @@
 
 {1 :zk-org/zk-nvim
  :config (fn []
-           (plug! :zk :setup {:picker :fzf_lua})
-           (on-attach))}
+           (plug! :zk :setup
+                  {:picker :fzf_lua
+                   :lsp {:config {:cmd [:zk :lsp]
+                                  :name :zk
+                                  :on_attach on-attach}
+                         :auto_attach {:enabled true :filetypes [:markdown]}}}))}

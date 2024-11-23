@@ -81,11 +81,29 @@
  ;; Search and replace
  {1 :MagicDuck/grug-far.nvim
   :config (fn [] (plug! :grug-far :setup {:headerMaxWidth 80}))}
+ ;; Images
+ {1 :3rd/image.nvim
+  :opts {:processor :magick_cli
+         :backend :kitty
+         :kitty_method :normal
+         :integrations {:markdown {:enabled true
+                                   :dowload_remote_images true
+                                   :filetypes [:markdown]}}
+         :integration {}
+         :max_width nil
+         :max_height nil
+         :max_width_window_percentage nil
+         :max_height_window_percentage 40
+         :window_overlap_clear_enabled true
+         :window_overlap_clear_ft_ignore [:cmp_menu :cmp_docs ""]
+         :editor_only_render_when_focused true
+         :tmux_show_only_in_active_window true
+         :hijack_file_patterns [:*.png :*.jpg :*.jpeg :*.gif :*.webp :*.avif]}}
+ {1 :HakonHarnes/img-clip.nvim :event :VeryLazy}
  ;; Misc
  {1 :brenoprata10/nvim-highlight-colors :lazy true}
  {1 :folke/which-key.nvim :dependencies [:echasnovski/mini.icons]}
  {1 :mbbill/undotree}
- {1 :3rd/image.nvim}
  {1 :nvimdev/dashboard-nvim
   :event :VimEnter
   :opts {:theme :doom

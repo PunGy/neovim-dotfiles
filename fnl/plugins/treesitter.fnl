@@ -39,6 +39,7 @@
                             ;; docs
                             :markdown
                             :markdown_inline
+                            :latex
                             :vimdoc
                             :luadoc
                             ;; Languages
