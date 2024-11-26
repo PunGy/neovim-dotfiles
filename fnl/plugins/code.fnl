@@ -90,7 +90,7 @@
             (cmp.setup {:mapping (cmp.mapping.preset.insert {:<C-Space> (cmp.mapping.complete)
                                                              :<C-n> (cmp.mapping.select_next_item cmp-select)
                                                              :<C-p> (cmp.mapping.select_prev_item cmp-select)
-                                                             :<Return> (cmp.mapping.confirm {:select true})})
+                                                             :<S-Return> (cmp.mapping.confirm {:select true})})
                         :snippet {:expand (fn [args]
                                             ((. (require :luasnip) :lsp_expand) args.body))}
                         :sources (cmp.config.sources [{:name :nvim_lsp}]
@@ -178,11 +178,12 @@
             (map! [nxo] :s (plug$ :flash :jump))
             (map! [nxo] :S (plug$ :flash :treesitter)))}
  ;; Editing
- {1 :echasnovski/mini.surround
-  :version "*"
-  :event [:VeryLazy]
-  :opts {:mappings {:add :gsa
-                    :delete :gsr
-                    :find :gsf
-                    :find_left :gsF
-                    :delete :gsr}}}]
+ ;{1 :echasnovski/mini.surround
+ ; :version "*"
+ ; :event [:VeryLazy]
+ ; :opts {:mappings {:add :gsa
+ ;                   :delete :gsr
+ ;                   :find :gsf
+ ;                   :find_left :gsF
+ ;                   :delete :gsr}}}
+                    ]

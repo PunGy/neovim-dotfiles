@@ -19,7 +19,7 @@
 (map! [nv] :<C-p> "\"+p" "System clipboard paste")
 (map! [nv] :<C-S-p> "\"+P" "System clipboard paste")
 
-(map! [ni] :<C-i>p (cmd$ :PasteImage) "Paste image from system clipboard")
+(map! [n] :<C-i>p (cmd$ :PasteImage) "Paste image from system clipboard")
 
 ;; Buffer management
 (map! [n] :<C-b>q close-buffer "Close buffer gracefully")
