@@ -1,6 +1,7 @@
 (import-macros {: plug!} :utils.macros)
 (import-macros {: map! : exec!} :hibiscus.vim)
 (local {: insert-timestamp} (require :utils.vim))
+(local {: is-dir} (require :utils.system))
 
 (fn insert-timestamp []
   (let [timestamp (os.date "(%H:%M): ")]
@@ -22,21 +23,18 @@
                          (let [title (vim.fn.input "Title: ")]
                            (when (not= title "")
                              (zkcmd! :ZkNew {: title})))))
-                 (map! [n] :<leader>nf #(zkcmd! :ZkNotes) "Find note")
+                 (map! [n] :<leader>fn #(zkcmd! :ZkNotes) "Find note")
                  (map! [n] :<leader>nd
                        #(zkcmd! :ZkNew {:group :daily :dir :daily})
                        "Open daily note")
                  (map! [ni] "<A-;>" insert-timestamp)
                  (map! [ni] :<A-o> #(make-list :new-list))))
 
-(local on-attach (fn []
-                   (keymaps)))
-
-{1 :zk-org/zk-nvim
- :config (fn []
-           (plug! :zk :setup
-                  {:picker :fzf_lua
-                   :lsp {:config {:cmd [:zk :lsp]
-                                  :name :zk
-                                  :on_attach on-attach}
-                         :auto_attach {:enabled true :filetypes [:markdown]}}}))}
+(if (is-dir (.. (vim.fn.getcwd) :/.zk))
+    {1 :zk-org/zk-nvim
+     :config (fn []
+               (plug! :zk :setup
+                      {:picker :fzf_lua
+                       :lsp {:config {:cmd [:zk :lsp] :name :zk}}})
+               (keymaps))}
+    {})

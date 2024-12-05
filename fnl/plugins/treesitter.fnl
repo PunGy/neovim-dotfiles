@@ -44,10 +44,11 @@
                             :luadoc
                             ;; Languages
                             :bash
-                            :c
                             :lua
                             :python
+                            :c
                             :cmake
+                            :make
                             :cpp
                             :go
                             :rust

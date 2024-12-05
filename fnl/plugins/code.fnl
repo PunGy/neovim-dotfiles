@@ -87,10 +87,10 @@
                            :handlers [setup]}))
             ;; Configure cmp
             (local cmp-select {:behavior cmp.SelectBehavior.Select})
-            (cmp.setup {:mapping (cmp.mapping.preset.insert {:<C-Space> (cmp.mapping.complete)
+            (cmp.setup {:mapping (cmp.mapping.preset.insert {:<A-Space> (cmp.mapping.complete)
                                                              :<C-n> (cmp.mapping.select_next_item cmp-select)
                                                              :<C-p> (cmp.mapping.select_prev_item cmp-select)
-                                                             :<S-Return> (cmp.mapping.confirm {:select true})})
+                                                             :<C-Return> (cmp.mapping.confirm {:select true})})
                         :snippet {:expand (fn [args]
                                             ((. (require :luasnip) :lsp_expand) args.body))}
                         :sources (cmp.config.sources [{:name :nvim_lsp}]
@@ -108,9 +108,11 @@
   :opts_extend [:ensure_installed]
   :opts {:ensure_installed [;; general
                             :shellcheck
-                            :haskell-language-server
                             ;; Note taking
                             ;:zk
+                            ;; C/CPP
+                            :clangd
+                            :clang-format
                             ;; lua
                             :stylua
                             :selene
@@ -122,6 +124,8 @@
                             :typescript-language-server
                             :css-lsp
                             :eslint-lsp
+                            ;; Python
+                            :pyright
                             ;; Go
                             :gofumpt
                             :goimports
@@ -130,6 +134,8 @@
                             :gotests
                             :iferr
                             :impl
+                            ;; Haskell
+                            :haskell-language-server
                             ;; Lisp
                             ;:fennel-language-server
                             ;:fennel-ls
@@ -158,7 +164,11 @@
             (local conform (require :conform))
             (conform.setup {})
             ;(conform.setup {:format_on_save {:timeout_ms 500 ;                                 :lsp_format :fallback}})
-            (tset conform :formatters_by_ft {:fennel [:fnlfmt] :lua [:stylua]})
+            (tset conform :formatters_by_ft
+                  {:fennel [:fnlfmt]
+                   :lua [:stylua]
+                   :c [:clang_format]
+                   :cpp [:clang_format]})
             (map! [n :remap] :<C-f>
                   (fn []
                     (let [buf (vim.api.nvim_get_current_buf)]
@@ -178,6 +188,7 @@
             (map! [nxo] :s (plug$ :flash :jump))
             (map! [nxo] :S (plug$ :flash :treesitter)))}
  ;; Editing
+ {1 :L3MON4D3/LuaSnip}
  ;{1 :echasnovski/mini.surround
  ; :version "*"
  ; :event [:VeryLazy]
@@ -186,4 +197,4 @@
  ;                   :find :gsf
  ;                   :find_left :gsF
  ;                   :delete :gsr}}}
-                    ]
+ ]
