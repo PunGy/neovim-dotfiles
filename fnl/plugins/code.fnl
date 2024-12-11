@@ -33,7 +33,8 @@
                      :ts_ls {:on_attach (fn [client]
                                           (set client.server_capabilities.documentFormattingProvider
                                                false))
-                             :init_options {:importModuleSpecifierPreference :relative}}}
+                             :init_options {:importModuleSpecifierPreference :relative}}
+                     :marksman {}}
            :setup {}})
   ;; Almost entirely copied form LazyVim - refactor to be more simple and lispy
   :config (fn [_ opts]
@@ -109,7 +110,7 @@
   :opts {:ensure_installed [;; general
                             :shellcheck
                             ;; Note taking
-                            ;:zk
+                            :markdownlint-cli2
                             ;; C/CPP
                             :clangd
                             :clang-format
@@ -164,11 +165,19 @@
             (local conform (require :conform))
             (conform.setup {})
             ;(conform.setup {:format_on_save {:timeout_ms 500 ;                                 :lsp_format :fallback}})
+            ;(tset conform :formatters
+            ;      {:markdownlint-cli2 {:condition (fn [_ ctx]
+            ;                                        (let [diag (vim.tbl_filter (fn [d]
+            ;                                                                     (= d.source
+            ;                                                                        :markdownlint))
+            ;                                                                   (vim.diagnostic.get ctx.buf))]
+            ;                                          (> (length diag) 0)))}})
             (tset conform :formatters_by_ft
                   {:fennel [:fnlfmt]
                    :lua [:stylua]
                    :c [:clang_format]
-                   :cpp [:clang_format]})
+                   :cpp [:clang_format]
+                   :markdown [:markdownlint-cli2]})
             (map! [n :remap] :<C-f>
                   (fn []
                     (let [buf (vim.api.nvim_get_current_buf)]
@@ -189,6 +198,7 @@
             (map! [nxo] :S (plug$ :flash :treesitter)))}
  ;; Editing
  {1 :L3MON4D3/LuaSnip}
+ {1 :ThePrimeagen/refactoring.nvim}
  ;{1 :echasnovski/mini.surround
  ; :version "*"
  ; :event [:VeryLazy]

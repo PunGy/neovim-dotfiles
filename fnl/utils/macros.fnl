@@ -4,6 +4,11 @@
 (fn plug! [plugin cmd & opts]
   `((. (require ,plugin) ,cmd) ,(unpack opts)))
 
+;; Execute plugin command -> every other plug should be replaced with this one
+(fn plug-> [plugin cmd & opts]
+  `((. (require ,plugin) ,(unpack cmd)) ,(unpack opts)))
+
+
 ;; Create a handler which executes a command
 (fn plug$ [plugin cmd & opts]
   `(fn [] ((. (require ,plugin) ,cmd) ,(unpack opts))))
@@ -14,4 +19,4 @@
 
 
 
-{: plug! : plug$ : cmd$}
+{: plug-> : plug! : plug$ : cmd$}

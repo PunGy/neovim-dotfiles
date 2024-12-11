@@ -1,7 +1,8 @@
 (import-macros {: map! : set!} :hibiscus.vim)
-(import-macros {: cmd$ : plug$ : plug!} :utils.macros)
+(import-macros {: cmd$ : plug$ : plug! : plug->} :utils.macros)
 (local {: close-buffer : file-explorer : unpin-all} (require :utils.ui))
 (local {: diagnostic-goto : cmd$0} (require :utils.code))
+(local {: is-in-arcadia} (require :utils.yndx))
 
 ;;;;;;;;;;;;
 ;; SYSTEM
@@ -45,8 +46,8 @@
   (map! [ni] (.. :<C-b> i) (plug$ :bufferline :go_to i true) "Go to buffer"))
 
 (map! [ni] :<C-b>$ (cmd$ "BufferLineGoToBuffer -1") "Go to last tab")
-(map! [ni] :<C-b>o (cmd$ "BufferLineCloseOthers")
-      "Close other buffers")
+(map! [ni] :<C-b>o (cmd$ :BufferLineCloseOthers) "Close other buffers")
+
 (map! [n] :<C-b>u unpin-all "Unpin all buffers")
 
 ;; clear search
@@ -95,8 +96,11 @@
 
 (map! [n] :<leader>ul (fn [] (set! relativenumber!)) "Toggle relative lines")
 
-(map! [n] :<leader>um (cmd$ ":RenderMarkdown toggle") "Toggle in-editor markdown preview")
-(map! [n] :<leader>uM (cmd$ ":MarkdownPreviewToggle") "Toggle external markdown preview")
+(map! [n] :<leader>um (cmd$ ":RenderMarkdown toggle")
+      "Toggle in-editor markdown preview")
+
+(map! [n] :<leader>uM (cmd$ ":MarkdownPreviewToggle")
+      "Toggle external markdown preview")
 
 ;; LSP Keymaps
 (map! [n] :gd (cmd$ "FzfLua lsp_definitions") "Go to definition")
@@ -108,7 +112,40 @@
 (map! [n] :<leader>ca vim.lsp.buf.code_action "Code actions")
 (map! [n] :<leader>cr vim.lsp.buf.rename :Rename)
 
-;; Explorers
+(map! [xn] :<leader>cp #(plug-> :refactoring [:debug :print_var]) "Show selected")
+(map! [xn] :<leader>cc #(plug-> :refactoring [:debug :cleanup] {}) "Clear debug entries")
+(map! [x] :<leader>cf (cmd$ "Refactor extract ") "Extract function")
+(map! [x] :<leader>cF (cmd$ "Refactor extract_to_file ") "Extract function to file")
+(map! [x] :<leader>cv (cmd$ "Refactor extract_var  ") "Extract variable")
+(map! [xn] :<leader>cR #(plug-> :refactoring [:select_refactor]) "Refactoring...")
+
+;;;;;;;;;;;;;;;
+;; Exploring ;;
+;;;;;;;;;;;;;;;
+
+;; File explorer ;;
+
+(map! [n] :<leader>e file-explorer "File Explorer")
+(map! [n] :<leader>ff (cmd$ "FzfLua files") "Find files")
+(map! [n] :<leader>fb (cmd$ "FzfLua buffers") "Find buffers")
+
+(fn fzf-arcadia []
+  (plug! :fzf-lua :files
+         {:cmd "arc status -s | awk '{print substr($0, index($0,$2))}'"}))
+
+(if (is-in-arcadia)
+    (map! [n] :<leader>fv fzf-arcadia "Find changed files")
+    (map! [n] :<leader>fv (cmd$ "FzfLua git_status") "Find changed files"))
+
+(map! [n] :<leader>pa (fn []
+                   (let [harpoon (require :harpoon)]
+                     (: (harpoon:list) :add))) "Pin a line")
+(map! [n] :<leader>pu (fn []
+                   (let [harpoon (require :harpoon)]
+                     (: (harpoon:list) :clear))) "Unpin all")
+
+;; Searching ;;
+
 (map! [nv] :<leader>sr
       (fn []
         (let [ext (and (= vim.bo.buftype "") (vim.fn.expand "%:e"))]
@@ -119,12 +156,9 @@
                                               nil)}})))
       "Search and Replace")
 
-(map! [n] :<leader>e file-explorer "File Explorer")
-
-(map! [n] :<leader>ff (cmd$ "FzfLua files") "Find files")
-(map! [n] :<leader>fb (cmd$ "FzfLua buffers") "Find buffers")
 (map! [n] :<leader>ss (cmd$ "FzfLua lsp_document_symbols")
       "Search for a symbol here")
+
 (map! [n] :<leader>sb (cmd$ "FzfLua lines") "Search in buffes")
 
 (map! [n] :<leader>sw (cmd$ "FzfLua lsp_workspace_symbols")
@@ -132,5 +166,3 @@
 
 (map! [n] :<leader>sg (cmd$ "FzfLua live_grep_glob") "Grep project")
 (map! [n] :<leader>/ (cmd$ "FzfLua blines") "Search here")
-
-

@@ -51,7 +51,40 @@
                                        :hide_by_name {:.git :.DS_Store}
                                        :never_show {}}}
          :popup_border_style :rounded}}
- {1 :ibhagwan/fzf-lua :dependencies [:nvim-tree/nvim-web-devicons]}
+ {1 :ibhagwan/fzf-lua
+  :dependencies [:nvim-tree/nvim-web-devicons]
+  :opts {:winopts {:preview {:layout :vertical}}}
+  :config (fn [_ opts]
+            (local fzf (require "fzf-lua"))
+            (local actions fzf.actions)
+
+            (fzf.setup opts)
+
+            ;; Fzf pinned previwer
+            (local builtin (require :fzf-lua.previewer.builtin))
+            (local PinnedPreviewer (builtin.buffer_or_file:extend))
+
+            (fn PinnedPreviewer.new [self o opts fzf-win]
+              (PinnedPreviewer.super.new self o opts fzf-win)
+              (setmetatable self PinnedPreviewer)
+              self)
+
+            (fn PinnedPreviewer.parse_entry [self entry-str]
+              (let [(path line) (entry-str:match "([^:]+):?(.*)")]
+                {:col 1 :line (or (tonumber line) 1) : path}))
+
+
+            (map! [n] :<leader>fp
+                  (fn []
+                    (let [pinned (. (: (require :harpoon) :list) :items)]
+                      (plug! :fzf-lua :fzf_exec
+                             (icollect [_ cfg (ipairs pinned)]
+                               (.. cfg.value ":" cfg.context.row))
+                             {:prompt "Pinned> "
+                              :previewer PinnedPreviewer
+                              :actions {:default actions.file_edit}})))
+                  "Find pinned"))}
+ {1 :ThePrimeagen/harpoon :branch :harpoon2}
  ;; Workspace UI
  {1 :akinsho/bufferline.nvim
   :dependencies [:nvim-tree/nvim-web-devicons]

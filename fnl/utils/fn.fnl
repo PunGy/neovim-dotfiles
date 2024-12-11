@@ -9,6 +9,10 @@
 ;      (table.insert result _elem2))
 ;    result))
 
+;;;;;;;;;;
+;; List ;;
+;;;;;;;;;;
+
 (fn find [lst pred]
   (match lst
     (where [a] (pred a)) a

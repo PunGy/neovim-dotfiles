@@ -1,6 +1,7 @@
 (import-macros {: map!} :hibiscus.vim)
 (import-macros {: cmd$} :utils.macros)
 (local {: is-dir} (require :utils.system))
+(local {: is-in-arcadia} (require :utils.yndx))
 
 ;; Common gitsigns config
 (local gitsigns-opts
@@ -43,8 +44,7 @@
                            "GitSigns Select Hunk"))})
 
 ;; IF arcadia mounted AND we are inside mounted instance - load arc vcs
-(if (and (is-dir (.. (os.getenv :HOME) :/arcadia/devtools))
-         (: (vim.fn.getcwd) :match :arcadia))
+(if (is-in-arcadia)
     ;; Patched gitsigns for arc vcs
     {:dir "~/arcadia/contrib/tier1/gitsigns.arc.nvim"
      :dev true
