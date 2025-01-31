@@ -46,6 +46,8 @@
                             :bash
                             :lua
                             :python
+                            :java
+                            :commonlisp
                             :c
                             :cmake
                             :make

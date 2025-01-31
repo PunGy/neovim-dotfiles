@@ -17,7 +17,8 @@
                  :hrsh7th/cmp-buffer
                  :hrsh7th/cmp-path
                  :hrsh7th/cmp-cmdline
-                 :hrsh7th/nvim-cmp]
+                 :hrsh7th/nvim-cmp
+                 :PaterJason/cmp-conjure]
   :opts (fn []
           {:diagnostics {:severity_sort true
                          :signs {:text [" " " " " " " "]}
@@ -34,7 +35,9 @@
                                           (set client.server_capabilities.documentFormattingProvider
                                                false))
                              :init_options {:importModuleSpecifierPreference :relative}}
-                     :marksman {}}
+                     :marksman {:on_attach (fn [client]
+                                             (if (pcall require :zk)
+                                                 (client.stop)))}}
            :setup {}})
   ;; Almost entirely copied form LazyVim - refactor to be more simple and lispy
   :config (fn [_ opts]
@@ -88,14 +91,15 @@
                            :handlers [setup]}))
             ;; Configure cmp
             (local cmp-select {:behavior cmp.SelectBehavior.Select})
-            (cmp.setup {:mapping (cmp.mapping.preset.insert {:<A-Space> (cmp.mapping.complete)
+            (cmp.setup {:mapping (cmp.mapping.preset.insert {:<A-Return> (cmp.mapping.complete)
                                                              :<C-n> (cmp.mapping.select_next_item cmp-select)
                                                              :<C-p> (cmp.mapping.select_prev_item cmp-select)
                                                              :<C-Return> (cmp.mapping.confirm {:select true})})
                         :snippet {:expand (fn [args]
                                             ((. (require :luasnip) :lsp_expand) args.body))}
                         :sources (cmp.config.sources [{:name :nvim_lsp}]
-                                                     [{:name :buffer}])})
+                                                     [{:name :buffer}]
+                                                     [{:name :conjure}])})
             (vim.diagnostic.config {:float {:border :rounded
                                             :focusable false
                                             :header ""
@@ -156,6 +160,8 @@
                           (each [_ tool (ipairs opts.ensure_installed)]
                             (local p (mr.get_package tool))
                             (when (not (p:is_installed)) (p:install))))))}
+ ;; Conjure
+ {1 :Olical/conjure}
  ;; Formatting
  {1 :stevearc/conform.nvim
   :cmd [:ConformInfo]
@@ -165,19 +171,21 @@
             (local conform (require :conform))
             (conform.setup {})
             ;(conform.setup {:format_on_save {:timeout_ms 500 ;                                 :lsp_format :fallback}})
-            ;(tset conform :formatters
-            ;      {:markdownlint-cli2 {:condition (fn [_ ctx]
-            ;                                        (let [diag (vim.tbl_filter (fn [d]
+            ;(tset conform :formatters ;      {:markdownlint-cli2 {:condition (fn [_ ctx] ;                                        (let [diag (vim.tbl_filter (fn [d]
             ;                                                                     (= d.source
             ;                                                                        :markdownlint))
             ;                                                                   (vim.diagnostic.get ctx.buf))]
             ;                                          (> (length diag) 0)))}})
+            (tset conform :formatters
+                  {:cl-indentify {:command :cl-indentify :args [:-r]}})
             (tset conform :formatters_by_ft
                   {:fennel [:fnlfmt]
+                   :lisp [:cl-indentify]
                    :lua [:stylua]
                    :c [:clang_format]
                    :cpp [:clang_format]
                    :markdown [:markdownlint-cli2]})
+            (conform.list_formatters)
             (map! [n :remap] :<C-f>
                   (fn []
                     (let [buf (vim.api.nvim_get_current_buf)]
@@ -199,12 +207,12 @@
  ;; Editing
  {1 :L3MON4D3/LuaSnip}
  {1 :ThePrimeagen/refactoring.nvim}
- ;{1 :echasnovski/mini.surround
- ; :version "*"
- ; :event [:VeryLazy]
- ; :opts {:mappings {:add :gsa
- ;                   :delete :gsr
- ;                   :find :gsf
- ;                   :find_left :gsF
- ;                   :delete :gsr}}}
+ {1 :echasnovski/mini.surround
+  :version "*"
+  :event [:VeryLazy]
+  :opts {:mappings {:add :gsa
+                    :delete :gsr
+                    :find :gsf
+                    :find_left :gsF
+                    :delete :gsr}}}
  ]

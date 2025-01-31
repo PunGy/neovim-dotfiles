@@ -55,11 +55,9 @@
   :dependencies [:nvim-tree/nvim-web-devicons]
   :opts {:winopts {:preview {:layout :vertical}}}
   :config (fn [_ opts]
-            (local fzf (require "fzf-lua"))
+            (local fzf (require :fzf-lua))
             (local actions fzf.actions)
-
             (fzf.setup opts)
-
             ;; Fzf pinned previwer
             (local builtin (require :fzf-lua.previewer.builtin))
             (local PinnedPreviewer (builtin.buffer_or_file:extend))
@@ -73,7 +71,6 @@
               (let [(path line) (entry-str:match "([^:]+):?(.*)")]
                 {:col 1 :line (or (tonumber line) 1) : path}))
 
-
             (map! [n] :<leader>fp
                   (fn []
                     (let [pinned (. (: (require :harpoon) :list) :items)]
@@ -86,22 +83,13 @@
                   "Find pinned"))}
  {1 :ThePrimeagen/harpoon :branch :harpoon2}
  ;; Workspace UI
- {1 :akinsho/bufferline.nvim
-  :dependencies [:nvim-tree/nvim-web-devicons]
-  :opts {:options {:diagnostics :nvim_lsp
-                   :show_buffer_close_icons false
-                   :close_command #(close-buffer $1 {:silent true})
-                   ;:groups {:items [((. (require :bufferline.groups) :builtin
-                   ;                     :pinned ):with {:icon "󰐃 "})]}
-                   }}
-  :config (fn [_ opts]
-            (local bufferline (require :bufferline))
-            (bufferline.setup opts))}
  ;; Theme
  {1 :rebelot/kanagawa.nvim
   :lazy false
-  :init (fn [] (exec! [colorscheme kanagawa]))
+  ;:init (fn [] (exec! [colorscheme kanagawa]))
   :opts {:commentStyle {:italic false}
+         :undercurl true
+         :keywordStyle {:italic true}
          :overrides (fn [colors]
                       (local {: palette :theme {: ui}} colors)
                       {:NeoTreeNormal {:fg ui.fg :bg ui.float.bg}
@@ -111,6 +99,29 @@
                        :DashboardKey {:fg palette.samuraiRed}
                        :WhichKeySeparator {:fg palette.katanaGray
                                            :italic false}})}}
+ {1 :neanias/everforest-nvim
+  :lazy false
+  :priority 1000
+  :init (fn [] (exec! [colorscheme everforest]))
+  :config (fn []
+            (exec! [set background=dark])
+            (plug! :everforest :setup {:background :hard :italics true}))}
+ {1 :seandewar/paragon.vim
+  :lazy false
+  :priority 1000
+  ;:init (fn []
+  ;        (exec! [set background=light])
+  ;        (exec! [colorscheme paragon]))
+  ;:config (fn []
+  ;          (exec! ))
+  }
+ {1 :nyoom-engineering/oxocarbon.nvim
+  :lazy false
+  :priority 1000
+  ;:init (fn []
+  ;        (exec! [set background=light])
+  ;        (exec! [colorscheme oxocarbon]))
+  }
  ;; Search and replace
  {1 :MagicDuck/grug-far.nvim
   :config (fn [] (plug! :grug-far :setup {:headerMaxWidth 80}))}

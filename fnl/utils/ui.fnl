@@ -2,21 +2,6 @@
 (local {: delete-buffer : current-buffer} (require :utils.vim))
 (local {: find : filter} (require :utils.fn))
 
-(fn unpin [buf-elem]
-  (plug! :bufferline.groups :remove_element :pinned buf-elem))
-
-(fn opened-buffers []
-  (. (plug! :bufferline :get_elements) :elements))
-
-(fn is-pinned [buf-elem]
-  (plug! :bufferline.groups :_is_pinned buf-elem))
-
-(fn unpin-all []
-  (each [_ buf in (ipairs (filter (opened-buffers) is-pinned))]
-    (unpin buf))
-  ;; refresh
-  (vim.schedule (fn [] (vim.cmd.redrawtabline))))
-
 (fn close-buffer [buf? opts?]
   (local {: nvim_win_set_buf
           : nvim_win_get_buf
@@ -26,7 +11,6 @@
   (local {: confirm : win_findbuf : buflisted : bufname : bufnr} vim.fn)
   (local opts (or opts? {:silent false}))
   (local buf (or buf? (current-buffer)))
-  (local buf-elem (find (opened-buffers) #(= (. $1 :id) buf)))
 
   (fn arrange-for-windows []
     (each [_ win (ipairs (win_findbuf buf))]
@@ -42,22 +26,47 @@
                                     (let [new-buf (nvim_create_buf true false)]
                                       (nvim_win_set_buf win new-buf))))))))))
 
-  (if (is-pinned buf-elem) ;; on try to remove pinned
-      (when (not opts.silent)
-        (print "Cannot remove pinned buffer! Unpin it first."))
-      ;; on try to remove modified
-      vim.bo.modified (let [choice (confirm (.. "Save changes to " (bufname))
-                                            "&Yes\n&No\nCancel")]
-                        (when (= choice 1)
-                          (vim.cmd.write)
-                          (arrange-for-windows)
-                          (delete-buffer buf)))
-      ;; on general remove
-      (do
-        (arrange-for-windows)
-        (delete-buffer buf))))
+  (if vim.bo.modified ;; on try to remove modified
+      (let [choice (confirm (.. "Save changes to " (bufname))
+                            "&Yes\n&No\nCancel")]
+        (when (= choice 1)
+          (vim.cmd.write)
+          (arrange-for-windows)
+          (delete-buffer buf))))
+  ;; on general remove
+  (do
+    (arrange-for-windows)
+    (delete-buffer buf)))
+
+;(fn close-all-buffers []
+;  (let [cur (vim.api.nvim_get_current_buf)]
+;    (each [_ buf (ipairs (vim.api.nvim_list_bufs))]
+;      (when (not= buf cur)
+;        (close-buffer buf)))))
 
 (fn file-explorer []
   (plug! :neo-tree.command :execute {:dir (vim.loop.cwd) :reveal true}))
 
-{: close-buffer : file-explorer : unpin-all}
+(fn extended-hover []
+  (local util (require :vim.lsp.util))
+  (vim.lsp.buf_request 0 :textDocument/hover (util.make_position_params)
+                       (fn [_ result ctx config]
+                         (set-forcibly! config (or config {}))
+                         (set config.focus_id ctx.method)
+                         (when (not (and result result.contents))
+                           (lua "return "))
+                         (var markdown-lines
+                              (util.convert_input_to_markdown_lines result.contents))
+                         (set markdown-lines
+                              (util.trim_empty_lines markdown-lines))
+                         (when (vim.tbl_isempty markdown-lines) (lua "return "))
+                         (vim.api.nvim_command " new ")
+                         (vim.api.nvim_buf_set_lines 0 0 1 false markdown-lines)
+                         (vim.api.nvim_command " setlocal ft=markdown ")
+                         (vim.api.nvim_command " nnoremap <buffer>q <C-W>c ")
+                         (vim.api.nvim_command " setlocal buftype+=nofile ")
+                         (vim.api.nvim_command " setlocal nobl ")
+                         (vim.api.nvim_command " setlocal conceallevel=2 ")
+                         (vim.api.nvim_command " setlocal concealcursor+=cn "))))
+
+{: close-buffer : file-explorer : extended-hover}

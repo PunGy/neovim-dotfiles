@@ -1,6 +1,6 @@
 (import-macros {: map! : set!} :hibiscus.vim)
 (import-macros {: cmd$ : plug$ : plug! : plug->} :utils.macros)
-(local {: close-buffer : file-explorer : unpin-all} (require :utils.ui))
+(local {: close-buffer : file-explorer } (require :utils.ui))
 (local {: diagnostic-goto : cmd$0} (require :utils.code))
 (local {: is-in-arcadia} (require :utils.yndx))
 
@@ -20,14 +20,11 @@
 (map! [nv] :<C-p> "\"+p" "System clipboard paste")
 (map! [nv] :<C-S-p> "\"+P" "System clipboard paste")
 
-(map! [n] :<C-i>p (cmd$ :PasteImage) "Paste image from system clipboard")
+;(map! [n] :<C-i>p (cmd$ :PasteImage) "Paste image from system clipboard")
 
 ;; Buffer management
 (map! [n] :<C-b>q close-buffer "Close buffer gracefully")
 
-;;(map! [n] :<S-h> (cmd$ :bprev))
-;;(map! [n] :<S-l> (cmd$ :bnext))
-(map! [ni] :<C-b>p (cmd$ :BufferLineTogglePin) "Pin buffer")
 (map! [ni] :<C-b>cn (fn []
                       (let [bufname (vim.fn.fnamemodify (vim.fn.expand "%:p")
                                                         ":t")]
@@ -40,21 +37,16 @@
                         (vim.fn.setreg "+" cwd-path)))
       "Copy buffer path")
 
-(import-macros {: map! : set!} :hibiscus.vim)
-(import-macros {: cmd$ : plug$ : plug!} :utils.macros)
-(for [i 1 4]
-  (map! [ni] (.. :<C-b> i) (plug$ :bufferline :go_to i true) "Go to buffer"))
-
-(map! [ni] :<C-b>$ (cmd$ "BufferLineGoToBuffer -1") "Go to last tab")
-(map! [ni] :<C-b>o (cmd$ :BufferLineCloseOthers) "Close other buffers")
-
-(map! [n] :<C-b>u unpin-all "Unpin all buffers")
+(map! [ni] :<C-b>o (cmd$ "%bdelete|edit#|bdelete#") "Close other buffers")
 
 ;; clear search
 (map! [ni] :<esc> :<cmd>noh<cr><esc>)
 
 ;; diagnostics navigatoin
-(map! [n] :<leader>cd vim.diagnostic.open_float "Line Diagnostics")
+(map! [n] :<leader>dl #(vim.diagnostic.open_float {:focusable true})
+      "Line Diagnostics")
+(map! [n] :<leader>df (cmd$ "FzfLua diagnostics_document") "File Diagnostics")
+(map! [n] :<leader>dw (cmd$ "FzfLua diagnostics_workspace") "Workspace Diagnostics")
 (map! [n] "]d" (diagnostic-goto true) "Next Diagnostic")
 (map! [n] "[d" (diagnostic-goto false) "Prev Diagnostic")
 (map! [n] "]e" (diagnostic-goto true :ERROR) "Next Error")
@@ -107,17 +99,20 @@
 (map! [n] :gD (cmd$ "FzfLua lsp_declarations") "Go to declaration")
 (map! [n] :gr (cmd$ "FzfLua lsp_references") :References)
 (map! [n] :K vim.lsp.buf.hover :Hover)
-(map! [n] :gK vim.lsp.buf.signature_help "Signature help")
-(map! [i] :<C-k> vim.lsp.buf.signature_help "Signature help")
+(map! [ni] :<C-k> vim.lsp.buf.signature_help "Signature help")
 (map! [n] :<leader>ca vim.lsp.buf.code_action "Code actions")
 (map! [n] :<leader>cr vim.lsp.buf.rename :Rename)
 
-(map! [xn] :<leader>cp #(plug-> :refactoring [:debug :print_var]) "Show selected")
-(map! [xn] :<leader>cc #(plug-> :refactoring [:debug :cleanup] {}) "Clear debug entries")
+(map! [xn] :<leader>cp #(plug-> :refactoring [:debug :print_var])
+      "Show selected")
+(map! [xn] :<leader>cc #(plug-> :refactoring [:debug :cleanup] {})
+      "Clear debug entries")
 (map! [x] :<leader>cf (cmd$ "Refactor extract ") "Extract function")
-(map! [x] :<leader>cF (cmd$ "Refactor extract_to_file ") "Extract function to file")
+(map! [x] :<leader>cF (cmd$ "Refactor extract_to_file ")
+      "Extract function to file")
 (map! [x] :<leader>cv (cmd$ "Refactor extract_var  ") "Extract variable")
-(map! [xn] :<leader>cR #(plug-> :refactoring [:select_refactor]) "Refactoring...")
+(map! [xn] :<leader>cR #(plug-> :refactoring [:select_refactor])
+      :Refactoring...)
 
 ;;;;;;;;;;;;;;;
 ;; Exploring ;;
@@ -138,11 +133,14 @@
     (map! [n] :<leader>fv (cmd$ "FzfLua git_status") "Find changed files"))
 
 (map! [n] :<leader>pa (fn []
-                   (let [harpoon (require :harpoon)]
-                     (: (harpoon:list) :add))) "Pin a line")
+                        (let [harpoon (require :harpoon)]
+                          (: (harpoon:list) :add)))
+      "Pin a line")
+
 (map! [n] :<leader>pu (fn []
-                   (let [harpoon (require :harpoon)]
-                     (: (harpoon:list) :clear))) "Unpin all")
+                        (let [harpoon (require :harpoon)]
+                          (: (harpoon:list) :clear)))
+      "Unpin all")
 
 ;; Searching ;;
 
