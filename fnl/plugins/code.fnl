@@ -129,6 +129,7 @@
                             :typescript-language-server
                             :css-lsp
                             :eslint-lsp
+                            :astro-language-server
                             ;; Python
                             :pyright
                             ;; Go
