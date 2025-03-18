@@ -39,6 +39,10 @@
 
 (map! [ni] :<C-b>o (cmd$ "%bdelete|edit#|bdelete#") "Close other buffers")
 
+;; Tab management
+
+(map! [n] :<C-Tab> (cmd$ :tabnext) "Next tab")
+
 ;; clear search
 (map! [ni] :<esc> :<cmd>noh<cr><esc>)
 
@@ -59,10 +63,10 @@
 ;;;;;;;;;
 
 ;; Session management
-(map! [n] :<C-x>l (plug$ :persistence :load {:last true})
+(map! [n] :<C-x>sl (plug$ :persistence :load {:last true})
       "Restore last session")
 
-(map! [n] :<leader>qs (plug$ :persistence :select) "Select session")
+(map! [n] :<C-x>ss (plug$ :persistence :select) "Select session")
 (map! [n] :<C-x>q (cmd$ :qa) "Quit NeoVim")
 
 ;; Menus
