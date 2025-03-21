@@ -2,6 +2,11 @@
 (import-macros {: plug! : plug$ : cmd$} :utils.macros)
 (local {: file-explorer : close-buffer} (require :utils.ui))
 
+(fn apply-theme []
+  ;(exec! [set background=dark])
+  ;(plug! :everforest :setup {:background :hard :italics true})
+  (exec! [colorscheme carbonfox]))
+
 (local lain
        ["⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠋⣉⣢⣤⣤⣤⣤⣴⣶⣤⣤⣄⣈⠙⠛⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"
         "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⢁⣠⣴⣿⡏⢀⣠⣿⣿⣿⣿⡿⠿⠿⠿⢿⣧⣀⣁⡨⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"
@@ -102,10 +107,10 @@
  {1 :neanias/everforest-nvim
   :lazy false
   :priority 1000
-  :init (fn [] (exec! [colorscheme everforest]))
+  :init apply-theme
   :config (fn []
-            (exec! [set background=dark])
             (plug! :everforest :setup {:background :hard :italics true}))}
+ {1 :EdenEast/nightfox.nvim}
  {1 :seandewar/paragon.vim
   :lazy false
   :priority 1000
