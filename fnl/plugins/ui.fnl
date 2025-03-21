@@ -2,10 +2,13 @@
 (import-macros {: plug! : plug$ : cmd$} :utils.macros)
 (local {: file-explorer : close-buffer} (require :utils.ui))
 
+
 (fn apply-theme []
   ;(exec! [set background=dark])
   ;(plug! :everforest :setup {:background :hard :italics true})
-  (exec! [colorscheme carbonfox]))
+  (if (= vim.env.THEME :light)
+      (exec! [colorscheme dayfox])
+      (exec! [colorscheme carbonfox])))
 
 (local lain
        ["⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠋⣉⣢⣤⣤⣤⣤⣴⣶⣤⣤⣄⣈⠙⠛⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"
