@@ -122,6 +122,8 @@
 ;; Exploring ;;
 ;;;;;;;;;;;;;;;
 
+(map! [n] :<leader>fs (cmd$ "FzfLua resume") "Resume last search")
+
 ;; File explorer ;;
 
 (map! [n] :<leader>e file-explorer "File Explorer")

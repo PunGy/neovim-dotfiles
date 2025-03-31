@@ -132,6 +132,8 @@
                             :astro-language-server
                             ;; Python
                             :pyright
+                            ;; Java
+                            :jdtls
                             ;; Go
                             :gofumpt
                             :goimports
