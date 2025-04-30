@@ -170,3 +170,12 @@
 
 (map! [n] :<leader>sg (cmd$ "FzfLua live_grep_glob") "Grep project")
 (map! [n] :<leader>/ (cmd$ "FzfLua blines") "Search here")
+
+;; Debbuging
+
+
+(map! [n] :<leader>ih (cmd$ :DapToggleBreakpoint) "Add breakpoint at line")
+(map! [n] :<leader>ir (cmd$ :DapContinue) "Start or Continue debbuging")
+(map! [n] :<leader>ii (cmd$ :DapStepInto) "Step Into")
+(map! [n] :<leader>io (cmd$ :DapStepOver) "Step Over")
+(map! [n] :<leader>it (cmd$ :DapStepOver) "Terminate Debbuging")

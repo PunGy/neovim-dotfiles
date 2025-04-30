@@ -35,6 +35,8 @@
                                           (set client.server_capabilities.documentFormattingProvider
                                                false))
                              :init_options {:importModuleSpecifierPreference :relative}}
+                     :neocmake {}
+                     :clangd {:cmd [:clangd :--background-index :--clang-tidy]}
                      :marksman {:on_attach (fn [client]
                                              (if (pcall require :zk)
                                                  (client.stop)))}}
@@ -118,6 +120,9 @@
                             ;; C/CPP
                             :clangd
                             :clang-format
+                            :codelldb
+                            :cmakelang
+                            :cmakelint
                             ;; lua
                             :stylua
                             :selene
@@ -157,14 +162,37 @@
                      (vim.defer_fn (fn []
                                      ((. (require :lazy.core.handler.event)
                                          :trigger) {:buf (vim.api.nvim_get_current_buf)
-                                                    :event :FileType}))
+                                                                                                                                :event :FileType}))
                        100)))
             (mr.refresh (fn []
                           (each [_ tool (ipairs opts.ensure_installed)]
                             (local p (mr.get_package tool))
                             (when (not (p:is_installed)) (p:install))))))}
+ {1 :jay-babu/mason-nvim-dap.nvim
+  :event [:VeryLazy]
+  :dependencies [:williamboman/mason.nvim :mfussenegger/nvim-dap]
+  :opts {:handlers {} :ensure_installed [:codelldb]}}
+ {1 :rcarriga/nvim-dap-ui
+  :dependencies [:mfussenegger/nvim-dap :nvim-neotest/nvim-nio]
+  :event [:VeryLazy]
+  :config (fn []
+            (let [dap (require :dap)
+                  dapui (require :dapui)]
+              (dapui.setup)
+
+              (fn dap.listeners.after.event_initialized.dapui_config []
+                (dapui.open))
+
+              (fn dap.listeners.before.event_terminated.dapui_config []
+                (dapui.close))
+
+              (fn dap.listeners.before.event_exited.dapui_config []
+                (dapui.close))))}
+ {1 :mfussenegger/nvim-dap}
  ;; Conjure
  {1 :Olical/conjure}
+ ;; Cmake
+ {1 :Civitasv/cmake-tools.nvim :event [:VeryLazy]}
  ;; Formatting
  {1 :stevearc/conform.nvim
   :cmd [:ConformInfo]
@@ -217,5 +245,5 @@
                     :delete :gsr
                     :find :gsf
                     :find_left :gsF
-                    :delete :gsr}}}
- ]
+                    :delete :gsr}}}]
+
