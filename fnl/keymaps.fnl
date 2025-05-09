@@ -8,6 +8,9 @@
 ;; SYSTEM
 ;;;;;;;;;;;;
 
+(map! [n] :+ :<C-a> :inc)
+(map! [n] :- :<C-a> :dec)
+
 ;; Select all
 (map! [n] :<C-a> :gg<S-v>G)
 ;; Select line without new line symbol

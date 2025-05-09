@@ -56,6 +56,7 @@
                             :rust
                             :sql
                             :fennel
+                            :asm
                             ;; Misc
                             :diff
                             :luap

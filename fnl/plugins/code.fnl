@@ -40,7 +40,12 @@
                      :marksman {:on_attach (fn [client]
                                              (if (pcall require :zk)
                                                  (client.stop)))}}
-           :setup {}})
+           :setup {:arduino_language_server (fn [server]
+                                              ((. (require :lspconfig) server :setup) {:cmd [:arduino-language-server
+                                                                                      :-clangd :/usr/bin/clangd
+                                                                                      :-cli :/home/pungy/.local/share/bin/arduino-cli
+                                                                                      :-cli-config :/home/pungy/.arduino15/arduino-cli.yaml
+                                                                                      :-fqbn :arduino:avr:uno]}))}})
   ;; Almost entirely copied form LazyVim - refactor to be more simple and lispy
   :config (fn [_ opts]
             (local {: servers} opts)
@@ -59,12 +64,8 @@
                                                      (or (. servers server) {}))]
                 (when (= server-opts.enabled false) (lua "return "))
                 (if (. opts.setup server)
-                    (when ((. opts.setup server) server server-opts)
-                      (lua "return "))
-                    (. opts.setup "*")
-                    (when ((. opts.setup "*") server server-opts)
-                      (lua "return ")))
-                ((. (require :lspconfig) server :setup) server-opts)))
+                    ((. opts.setup server) server server-opts)
+                    ((. (require :lspconfig) server :setup) server-opts))))
 
             ;; Connect with mason
             (local (have-mason mlsp) (pcall require :mason-lspconfig))
@@ -117,6 +118,9 @@
                             :shellcheck
                             ;; Note taking
                             :markdownlint-cli2
+                            ;; Microcontrollers
+                            :arduino-language-server
+                            :asm-lsp
                             ;; C/CPP
                             :clangd
                             :clang-format
