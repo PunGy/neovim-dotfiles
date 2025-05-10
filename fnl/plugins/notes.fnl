@@ -23,7 +23,8 @@
                          (let [title (vim.fn.input "Title: ")]
                            (when (not= title "")
                              (zkcmd! :ZkNew {: title})))))
-                 (map! [n] :<leader>fn #(zkcmd! :ZkNotes) "Find note")
+                 (map! [n] :<leader>nf #(zkcmd! :ZkNotes) "Find note by name")
+                 (map! [n] :<leader>nt #(zkcmd! :ZkTags) "Notes by tag")
                  (map! [n] :<leader>nd
                        #(zkcmd! :ZkNew {:group :daily :dir :daily})
                        "Open daily note")
