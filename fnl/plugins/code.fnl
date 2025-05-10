@@ -111,6 +111,7 @@
                                             :style :minimal}}))}
  ;; MASON
  {1 :williamboman/mason.nvim
+  :version :^1.0.0
   :cmd :Mason
   :build ":MasonUpdate"
   :opts_extend [:ensure_installed]
@@ -172,6 +173,8 @@
                           (each [_ tool (ipairs opts.ensure_installed)]
                             (local p (mr.get_package tool))
                             (when (not (p:is_installed)) (p:install))))))}
+ {1 :williamboman/mason-lspconfig.nvim
+  :version :^1.0.0}
  {1 :jay-babu/mason-nvim-dap.nvim
   :event [:VeryLazy]
   :dependencies [:williamboman/mason.nvim :mfussenegger/nvim-dap]
