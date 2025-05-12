@@ -25,6 +25,8 @@
                              (zkcmd! :ZkNew {: title})))))
                  (map! [n] :<leader>nf #(zkcmd! :ZkNotes) "Find note by name")
                  (map! [n] :<leader>nt #(zkcmd! :ZkTags) "Notes by tag")
+                 (map! [n] :<leader>nb #(zkcmd! :ZkBacklinks) "Find links to this note")
+                 (map! [n] :<leader>nl #(zkcmd! :ZkLinks) "Show links in this note")
                  (map! [n] :<leader>nd
                        #(zkcmd! :ZkNew {:group :daily :dir :daily})
                        "Open daily note")
