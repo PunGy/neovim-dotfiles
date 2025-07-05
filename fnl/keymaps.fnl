@@ -71,6 +71,7 @@
 
 (map! [n] :<C-x>ss (plug$ :persistence :select) "Select session")
 (map! [n] :<C-x>q (cmd$ :qa) "Quit NeoVim")
+(map! [n] :<C-x>Q (cmd$ :qall!) "Force quit NeoVim")
 
 ;; Menus
 (map! [n] :<leader>mp (cmd$ :Lazy) "Package manager")
@@ -135,7 +136,7 @@
 
 (fn fzf-arcadia []
   (plug! :fzf-lua :files
-         {:cmd "arc status -s | awk '{print substr($0, index($0,$2))}'"}))
+         {:cmd "arc status -s | awk '{print substr($0, index($0,$2))}'" :hidden false :prompt "ArcFiles❯ "}))
 
 (if (is-in-arcadia)
     (map! [n] :<leader>fv fzf-arcadia "Find changed files")
