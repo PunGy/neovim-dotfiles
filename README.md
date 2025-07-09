@@ -1,4 +1,4 @@
-# SoVIM
+# VIM
 
 My configuration of NeoVim IDE using Fennel language.
 
