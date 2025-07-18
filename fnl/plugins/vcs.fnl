@@ -1,5 +1,5 @@
 (import-macros {: map!} :hibiscus.vim)
-(import-macros {: cmd$} :utils.macros)
+(import-macros {: cmd$ : term$} :utils.macros)
 (local {: is-dir} (require :utils.system))
 (local {: is-in-arcadia} (require :utils.yndx))
 
@@ -41,7 +41,17 @@
                      (map! [n :buffer] :<leader>vD #(gs.diffthis "~")
                            "Diff This ~")
                      (map! [ox :buffer] :ih (cmd$ ":<C-U>Gitsigns select_hunk")
-                           "GitSigns Select Hunk"))})
+                           "GitSigns Select Hunk")
+                     ;; Git management commands
+                     (map! [n :buffer] :<leader>vms
+                           (term$ "git add . && git commit -m $(date +%Y-%m-%d_%H-%M-%S) && git push")
+                           "Save changes and push")
+                     (map! [n :buffer] :<leader>vmp (term$ "git pull")
+                           "Sync notes")
+                     (map! [n :buffer] :<leader>vmh (term$ "git stash")
+                           "Stash changes (hide)")
+                     (map! [n :buffer] :<leader>vmu (term$ "git stash pop")
+                           "Unstash changes (unhide)"))})
 
 ;; IF arcadia mounted AND we are inside mounted instance - load arc vcs
 (if (is-in-arcadia)

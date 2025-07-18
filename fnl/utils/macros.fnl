@@ -12,11 +12,14 @@
 ;; Create a handler which executes a command
 (fn plug$ [plugin cmd & opts]
   `(fn [] ((. (require ,plugin) ,cmd) ,(unpack opts))))
-
 ;; create a handler for executing vim command
 (fn cmd$ [cmd]
   (values (.. "<cmd>" cmd "<cr>")))
 
+;; create a handler for executing terminal command
+(fn term$ [cmd]
+  (values (.. "<cmd>terminal " cmd "<cr>")))
 
 
-{: plug-> : plug! : plug$ : cmd$}
+
+{: plug-> : plug! : plug$ : cmd$ : term$}

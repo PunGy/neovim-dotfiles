@@ -1,6 +1,6 @@
 (import-macros {: map! : set!} :hibiscus.vim)
 (import-macros {: cmd$ : plug$ : plug! : plug->} :utils.macros)
-(local {: close-buffer : file-explorer } (require :utils.ui))
+(local {: close-buffer : file-explorer} (require :utils.ui))
 (local {: diagnostic-goto : cmd$0} (require :utils.code))
 (local {: is-in-arcadia} (require :utils.yndx))
 
@@ -8,8 +8,8 @@
 ;; SYSTEM
 ;;;;;;;;;;;;
 
-(map! [n] :+ :<C-a> :inc)
-(map! [n] :- :<C-a> :dec)
+(map! [n] "+" :<C-a> :inc)
+(map! [n] "-" :<C-a> :dec)
 
 ;; Select all
 (map! [n] :<C-a> :gg<S-v>G)
@@ -52,8 +52,10 @@
 ;; diagnostics navigatoin
 (map! [n] :<leader>dl #(vim.diagnostic.open_float {:focusable true})
       "Line Diagnostics")
+
 (map! [n] :<leader>df (cmd$ "FzfLua diagnostics_document") "File Diagnostics")
-(map! [n] :<leader>dw (cmd$ "FzfLua diagnostics_workspace") "Workspace Diagnostics")
+(map! [n] :<leader>dw (cmd$ "FzfLua diagnostics_workspace")
+      "Workspace Diagnostics")
 (map! [n] "]d" (diagnostic-goto true) "Next Diagnostic")
 (map! [n] "[d" (diagnostic-goto false) "Prev Diagnostic")
 (map! [n] "]e" (diagnostic-goto true :ERROR) "Next Error")
@@ -113,11 +115,14 @@
 
 (map! [xn] :<leader>cp #(plug-> :refactoring [:debug :print_var])
       "Show selected")
+
 (map! [xn] :<leader>cc #(plug-> :refactoring [:debug :cleanup] {})
       "Clear debug entries")
+
 (map! [x] :<leader>cf (cmd$ "Refactor extract ") "Extract function")
 (map! [x] :<leader>cF (cmd$ "Refactor extract_to_file ")
       "Extract function to file")
+
 (map! [x] :<leader>cv (cmd$ "Refactor extract_var  ") "Extract variable")
 (map! [xn] :<leader>cR #(plug-> :refactoring [:select_refactor])
       :Refactoring...)
@@ -135,8 +140,9 @@
 (map! [n] :<leader>fb (cmd$ "FzfLua buffers") "Find buffers")
 
 (fn fzf-arcadia []
-  (plug! :fzf-lua :files
-         {:cmd "arc status -s | awk '{print substr($0, index($0,$2))}'" :hidden false :prompt "ArcFiles❯ "}))
+  (plug! :fzf-lua :files {:cmd "arc status -s | awk '{print substr($0, index($0,$2))}'"
+                          :hidden false
+                          :prompt "ArcFiles❯ "}))
 
 (if (is-in-arcadia)
     (map! [n] :<leader>fv fzf-arcadia "Find changed files")
@@ -177,9 +183,24 @@
 
 ;; Debbuging
 
-
 (map! [n] :<leader>ih (cmd$ :DapToggleBreakpoint) "Add breakpoint at line")
 (map! [n] :<leader>ir (cmd$ :DapContinue) "Start or Continue debbuging")
 (map! [n] :<leader>ii (cmd$ :DapStepInto) "Step Into")
 (map! [n] :<leader>io (cmd$ :DapStepOver) "Step Over")
 (map! [n] :<leader>it (cmd$ :DapStepOver) "Terminate Debbuging")
+
+;; ARC
+
+; (vim.keymap.set :n :<leader>t
+;                 (fn []
+;                   (vim.ui.open (.. "https://st.yandex-team.ru/"
+;                                    (vim.fn.expand :<cfile>))))
+;                 {:desc "Open a tracker ticket"})
+;
+; (vim.keymap.set :n :<leader>o (arcadia-map) {:desc "Open file in arcadia"})
+;
+; (vim.keymap.set :n :<leader>O (arcadia-map :line)
+;                 {:desc "Open file in arcadia"})
+;
+; (vim.keymap.set :v :<leader>o (arcadia-map :range)
+;                 {:desc "Open file in arcadia"})
