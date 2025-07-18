@@ -44,10 +44,13 @@
                            "GitSigns Select Hunk")
                      ;; Git management commands
                      (map! [n :buffer] :<leader>vms
-                           (term$ "git add . && git commit -m $(date +%Y-%m-%d_%H-%M-%S) && git push")
+                           (term$ "git add . && git commit -m $(timestamp) && git push")
                            "Save changes and push")
+                     (map! [n :buffer] :<leader>vmP
+                           (term$ "git push")
+                           "Push")
                      (map! [n :buffer] :<leader>vmp (term$ "git pull")
-                           "Sync notes")
+                           "Pull")
                      (map! [n :buffer] :<leader>vmh (term$ "git stash")
                            "Stash changes (hide)")
                      (map! [n :buffer] :<leader>vmu (term$ "git stash pop")
