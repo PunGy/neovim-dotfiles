@@ -3,6 +3,7 @@
 (local {: insert-timestamp} (require :utils.vim))
 (local {: is-dir} (require :utils.system))
 
+
 (fn insert-timestamp []
   (let [timestamp (os.date "(%H:%M): ")]
     (vim.api.nvim_put [timestamp] :c true true)))

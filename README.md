@@ -4,7 +4,7 @@ My configuration of NeoVim IDE using Fennel language.
 
 ## System Dependencies
 
-- neovim >= v0.10
+- neovim >= v0.11
 - [fennel](https://fennel-lang.org/setup#downloading-fennel)
 - fzf - file search
   - fd - better `find`
@@ -25,10 +25,8 @@ For personal wiki:
 
 - **Fennel building** - [tangerine](https://github.com/udayvir-singh/tangerine.nvim) + [hibiscus.nvim](https://github.com/udayvir-singh/hibiscus.nvim)
 - **UI**:
-    - **Theme** - [Kanagawa](https://github.com/rebelot/kanagawa.nvim/tree/master)
     - **Navigation** - [Fzf-lua](https://github.com/ibhagwan/fzf-lua)
     - **Explorer** - [NeoTree](https://github.com/nvim-neo-tree/neo-tree.nvim)
-    - **Buffer management** - [Bufferline](https://github.com/akinsho/bufferline.nvim)
     - **Dashboard** - [dashboard.nvim](https://github.com/nvimdev/dashboard-nvim)
 - TODO: describe other plugins and their need
 
@@ -43,10 +41,6 @@ For personal wiki:
 | Dashboard |
 |-------|
 | ![dashboard](./assets/dashboard.png) |
-
-| File explorer | Buffer explorer |
-|-------|----|
-| ![file](./assets/file-explorer.png) | ![file](./assets/exploring-buffers.png) |
 
 | Workspace |
 |-------|
