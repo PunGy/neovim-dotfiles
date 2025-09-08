@@ -46,7 +46,7 @@
         "⡇⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠰⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠐⢸"])
 
 [;; File explorers
- {1 :nvim-neo-tree/neo-tree.nvim
+ {1 :nvim-neo-tree/neo-tree.nvim ;; File explorer
   :branch :v3.x
   :dependencies [:nvim-lua/plenary.nvim
                  :nvim-tree/nvim-web-devicons
@@ -59,7 +59,7 @@
                                        :hide_by_name {:.git :.DS_Store}
                                        :never_show {}}}
          :popup_border_style :rounded}}
- {1 :ibhagwan/fzf-lua
+ {1 :ibhagwan/fzf-lua ;; Navigator
   :dependencies [:nvim-tree/nvim-web-devicons]
   :opts {:winopts {:preview {:layout :vertical}}}
   :config (fn [_ opts]
@@ -89,7 +89,6 @@
                               :previewer PinnedPreviewer
                               :actions {:default actions.file_edit}})))
                   "Find pinned"))}
- {1 :ThePrimeagen/harpoon :branch :harpoon2}
  ;; Workspace UI
  ;; Theme
  {1 :rebelot/kanagawa.nvim
@@ -130,9 +129,11 @@
   ;        (exec! [set background=light])
   ;        (exec! [colorscheme oxocarbon]))
   }
+
  ;; Search and replace
  {1 :MagicDuck/grug-far.nvim
   :config (fn [] (plug! :grug-far :setup {:headerMaxWidth 80}))}
+
  ;; Images
  {1 :3rd/image.nvim
   :opts {:processor :magick_cli
@@ -152,11 +153,12 @@
          :tmux_show_only_in_active_window true
          :hijack_file_patterns [:*.png :*.jpg :*.jpeg :*.gif :*.webp :*.avif]}}
  {1 :HakonHarnes/img-clip.nvim :event :VeryLazy}
+
  ;; Misc
- {1 :brenoprata10/nvim-highlight-colors :lazy true}
- {1 :folke/which-key.nvim :dependencies [:echasnovski/mini.icons]}
- {1 :mbbill/undotree}
- {1 :nvimdev/dashboard-nvim
+ {1 :brenoprata10/nvim-highlight-colors :lazy true} ;; todo i cant recall
+ {1 :folke/which-key.nvim :dependencies [:echasnovski/mini.icons]} ;; next key i can press
+ {1 :mbbill/undotree} ;; History of changes for the buffer
+ {1 :nvimdev/dashboard-nvim ;; Dashboard screen on open the vim
   :event :VimEnter
   :opts {:theme :doom
          ;:hide {:statusline false}

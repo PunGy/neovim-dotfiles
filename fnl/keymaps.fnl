@@ -178,7 +178,7 @@
 (map! [n] :<leader>sw (cmd$ "FzfLua lsp_workspace_symbols")
       "Search for a symbol in project")
 
-(map! [n] :<leader>sg (cmd$ "FzfLua live_grep_glob") "Grep project")
+(map! [n] :<leader>sg (cmd$ "FzfLua live_grep") "Grep project")
 (map! [n] :<leader>/ (cmd$ "FzfLua blines") "Search here")
 
 ;; Debbuging
