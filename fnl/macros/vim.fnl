@@ -3,6 +3,9 @@
 (fn set! [opt val?]
   `(tset vim :opt ,(tostring opt) ,(if (= val? nil) true val?)))
 
+(fn set-local! [opt val?]
+  `(tset vim :opt_local ,(tostring opt) ,(if (= val? nil) true val?)))
+
 (fn map! [mode seq cmd desc?]
   (lambda string-split [str]
     (let [tbl []]
@@ -19,4 +22,4 @@
   `((. (require ,(tostring plug)) ,(if (= (type path) :table) (unpack path) path))
     ,(unpack opts)))
 
-{: set! : map! : plug!}
+{: set! : map! : plug! : set-local!}
