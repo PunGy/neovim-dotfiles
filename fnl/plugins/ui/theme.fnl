@@ -1,4 +1,4 @@
-(import-macros {: plug!} :utils.vim)
+(import-macros {: plug!} :macros.vim)
 
 [{1 :miikanissi/modus-themes.nvim
   :priority 1000

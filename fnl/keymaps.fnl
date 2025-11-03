@@ -1,10 +1,11 @@
-(import-macros {: cmd$} :utils.exec)
-(import-macros {: map!} :utils.vim)
+(import-macros {: cmd$} :macros.exec)
+(import-macros {: map!} :macros.vim)
 
 (map! nv :<C-y> "\"+y" "Copy to clipboard")
 (map! nv :<C-p> "\"+p" "Paste from clipboard")
 (map! n :<C-s> (cmd$ :w) "Save the buffer")
 (map! n :<C-x>q (cmd$ :qa) "Quit NeoVim")
+(map! n :<C-x>Q (cmd$ :qall!) "Quit NeoVim")
 (map! n :<Esc> (cmd$ :noh) "Clear selection")
 (map! n :<C-b>q (cmd$ :bdelete) "Close buffer")
 

@@ -1,33 +1,30 @@
-(local servers [])
+;; Servers
 
-[{1 :neovim/nvim-lspconfig
-  :event [:BufReadPost :BufWritePost :BufNewFile]
-  :opts {:diagnostics {:severity_sort true
+(local configs
+       {:hls {:cmd [:haskell-language-server-wrapper]
+              :filetypes [:haskell]
+              :settings {:haskell {:formattingProvider :fourmolu}}}})
+
+(local servers [:hls :ts_ls :eslint])
+
+;; Config
+
+(local diagnostics-ui {:severity_sort true
                        :signs {:text [" " " " " " " "]}
                        :underline true
                        :update_in_insert false
                        :virtual_text {:prefix "●"
                                       :source :if_many
-                                      :spacing 4}}
-         :servers {:eslint {:settings {:workingDirectories {:mode :auto}}
-                            :on_attach (fn [client]
-                                         (set client.server_capabilities.documentFormattingProvider
-                                              true))}
-                   :ts_ls {:on_attach (fn [client]
-                                        (set client.server_capabilities.documentFormattingProvider
-                                             false))
-                           :init_options {:importModuleSpecifierPreference :relative}}
-                   :neocmake {}
-                   :clangd {:cmd [:clangd :--background-index :--clang-tidy]}
-                   :marksman {:on_attach (fn [client]
-                                           (if (pcall require :zk)
-                                               (client.stop)))}
-                   :hls {:settings {:haskell {:formattingProvider :fourmolu}}}}}
-  :config (vim.schedule_wrap (fn [_ opts]
-                               (vim.diagnostic.config (vim.deepcopy opts.diagnostics))
-                               (vim.lsp.config :hls
-                                               {:cmd [:haskell-language-server-wrapper]
-                                                :filetypes [:hs]
-                                                :settings {:haskell {:formattingProvider :fourmolu}}})
+                                      :spacing 4}})
 
-                               (vim.lsp.enable [:hls :ts_ls])))}]
+;; Setup
+
+(fn on-startup []
+  (each [server config (ipairs configs)]
+    (vim.lsp.config server config))
+  (vim.diagnostic.config (vim.deepcopy diagnostics-ui))
+  (vim.lsp.enable servers))
+
+[{1 :neovim/nvim-lspconfig
+  :event [:BufReadPost :BufWritePost :BufNewFile]
+  :config (vim.schedule_wrap on-startup)}]

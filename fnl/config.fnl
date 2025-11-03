@@ -1,4 +1,4 @@
-(import-macros {: set!} :utils.vim)
+(import-macros {: set!} :macros.vim)
 
 (require :keymaps)
 
