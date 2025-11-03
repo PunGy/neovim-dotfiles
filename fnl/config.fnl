@@ -1,4 +1,6 @@
-(import-macros {: set! : g!} :hibiscus.vim)
+(import-macros {: set!} :utils.vim)
+
+(require :keymaps)
 
 ;; Number of spaces that a <Tab> in the file counts for
 (set! tabstop 2)
@@ -54,8 +56,4 @@
 (set! signcolumn :yes)
 
 ;; Always show the sign column to avoid text shifting
-
 (set! list)
-
-;; Enable showing whitespace characters (spaces, tabs, etc.)
-

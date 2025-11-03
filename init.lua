@@ -1,45 +1,33 @@
-local function bootstrap(url)
-	local name = url:gsub(".*/", "")
-	local path
-
-	path = vim.fn.stdpath("data") .. "/lazy/" .. name
-	vim.opt.rtp:prepend(path)
-
-	if vim.fn.isdirectory(path) == 0 then
-		print(name .. ": installing in data dir...")
-
-		vim.fn.system({ "git", "clone", url, path })
-
-		vim.cmd("redraw")
-		print(name .. ": finished installing")
-	end
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  if vim.v.shell_error ~= 0 then
+    vim.api.nvim_echo({
+      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+      { out, "WarningMsg" },
+      { "\nPress any key to exit..." },
+    }, true, {})
+    vim.fn.getchar()
+    os.exit(1)
+  end
 end
+vim.opt.rtp:prepend(lazypath)
 
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
 
-bootstrap("https://github.com/udayvir-singh/tangerine.nvim")
-bootstrap("https://github.com/udayvir-singh/hibiscus.nvim")
-
-require("tangerine").setup({
-	compiler = {
-		float = true, -- show output in floating window
-		clean = true, -- delete stale lua files
-		force = false, -- disable diffing (not recommended)
-		verbose = false, -- disable messages showing compiled files
-
-		globals = vim.tbl_keys(_G), -- list of alowed globals in fennel code		verbose = false,
-		-- compile every time changes are made to fennel files or on entering vim
-		hooks = { "onsave", "oninit" },
-	},
-	eval = {
-		float = true,
-		diagnostic = {
-			virtual = true,
-			timeout = 10,
-		},
-	},
-	highlight = {
-		float = "Normal",
-		success = "String",
-		errors = "DiagnosticError",
-	},
+require("lazy").setup({
+  spec = {
+    { "Olical/nfnl", ft = "fennel" },
+    { import = "plugins" },
+    { import = "plugins/ui" },
+    { import = "plugins/coding" },
+  },
+  install = {},
+  checker = {
+    enabled = false,
+  },
 })
+
+require("config")

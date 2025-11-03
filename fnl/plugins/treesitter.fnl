@@ -1,24 +1,13 @@
-(fn dedup [list]
-  (let [ret {}
-        seen {}]
-    (each [_ v (ipairs list)]
-      (when (not (. seen v)) (table.insert ret v) (tset seen v true)))
-    ret))
-
 [{1 :nvim-treesitter/nvim-treesitter
   :build ":TSUpdate"
   :cmd [:TSUpdateSync :TSUpdate :TSInstall]
-  :config (fn [_ opts]
-            (when (= (type opts.ensure_installed) :table)
-              (set opts.ensure_installed (dedup opts.ensure_installed)))
-            ((. (require :nvim-treesitter.configs) :setup) opts))
+  :lazy false
   :event [:BufReadPost :BufWritePost :BufNewFile :VeryLazy]
+  :config (fn [_ opts]
+            ((. (require :nvim-treesitter.configs) :setup) opts))
   :init (fn [plugin]
           ((. (require :lazy.core.loader) :add_to_rtp) plugin)
           (require :nvim-treesitter.query_predicates))
-  ;:keys [{1 :<c-space> :desc "Increment Selection"}
-  ;       {1 :<bs> :desc "Decrement Selection" :mode :x}]
-  :lazy (= (vim.fn.argc (- 1)) 0)
   :opts {:ensure_installed [;; web
                             :html
                             :javascript
@@ -57,6 +46,7 @@
                             :sql
                             :fennel
                             :asm
+                            :haskell
                             ;; Misc
                             :diff
                             :luap
@@ -66,24 +56,6 @@
                             :vim
                             :gitignore]
          :highlight {:enable true}
-         :incremental_selection {:enable true
-                                 :keymaps {:init_selection :<C-space>
-                                           :node_decremental :<bs>
-                                           :node_incremental :<C-space>
-                                           :scope_incremental false}}
-         :indent {:enable true}
-         :textobjects {:move {:enable true
-                              :goto_next_end {"]A" "@parameter.inner"
-                                              "]C" "@class.outer"
-                                              "]F" "@function.outer"}
-                              :goto_next_start {"]a" "@parameter.inner"
-                                                "]c" "@class.outer"
-                                                "]f" "@function.outer"}
-                              :goto_previous_end {"[A" "@parameter.inner"
-                                                  "[C" "@class.outer"
-                                                  "[F" "@function.outer"}
-                              :goto_previous_start {"[a" "@parameter.inner"
-                                                    "[c" "@class.outer"
-                                                    "[f" "@function.outer"}}}}
+         :indent {:enable true}}
   :opts_extend [:ensure_installed]
   :version false}]
