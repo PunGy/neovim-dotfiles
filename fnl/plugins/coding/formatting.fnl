@@ -12,5 +12,4 @@
                            :lua [:stylua]
                            :c [:clang_format]
                            :cpp [:clang_format]
-                           :markdown [:markdownlint-cli2]
-                           :* [:trim_whitespace]}}}
+                           :markdown [:markdownlint-cli2]}}}

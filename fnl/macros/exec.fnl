@@ -5,4 +5,7 @@
 (fn cmd$ [cmd]
   (values (.. "<cmd>" cmd "<cr>")))
 
-{: cmd$}
+(fn term$ [cmd]
+  (values (.. "<cmd>terminal " cmd "<cr>")))
+
+{: cmd$ : term$}
