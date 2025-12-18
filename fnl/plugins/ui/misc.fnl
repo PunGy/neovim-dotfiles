@@ -22,7 +22,11 @@
          :cmdline {:enabled true
                    :keymap {:preset :inherit
                             :<M-Enter> [:select_accept_and_enter]}
-                   :completion {:menu {:auto_show true}}}}}
+                   :completion {:menu {:auto_show true
+                                       :draw {:columns [{1 :label
+                                                         2 :label_description
+                                                         :gap 1}
+                                                        {1 :kind_icon 2 :kind}]}}}}}}
  ; History of changes for the buffer
  {1 :mbbill/undotree
   :keys [[:<leader>h vim.cmd.UndotreeToggle :desc "Show buffer history"]]}]

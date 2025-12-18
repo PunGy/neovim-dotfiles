@@ -57,3 +57,7 @@
 
 ;; Always show the sign column to avoid text shifting
 (set! list)
+
+;; Make trailing space and tab little nicer with list mode
+(local space "·")
+(vim.opt.listchars:append {:nbsp space :tab "· " :trail space})

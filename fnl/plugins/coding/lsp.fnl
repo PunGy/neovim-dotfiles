@@ -3,9 +3,17 @@
 (local configs
        {:hls {:cmd [:haskell-language-server-wrapper]
               :filetypes [:haskell]
-              :settings {:haskell {:formattingProvider :fourmolu}}}})
+              :settings {:haskell {:formattingProvider :fourmolu}}}
+        :eslint {:settings {:workingDirectories {:mode :auto}}
+                 :on_attach (fn [client]
+                              (set client.server_capabilities.documentFormattingProvider
+                                   true))}
+        :ts_ls {:on_attach (fn [client]
+                             (set client.server_capabilities.documentFormattingProvider
+                                  false))
+                :init_options {:importModuleSpecifierPreference :relative}}})
 
-(local servers [:hls :ts_ls :eslint])
+(local servers [:hls :ts_ls :eslint :rust_analyzer])
 
 ;; Config
 
@@ -20,7 +28,7 @@
 ;; Setup
 
 (fn on-startup []
-  (each [server config (ipairs configs)]
+  (each [server config (pairs configs)]
     (vim.lsp.config server config))
   (vim.diagnostic.config (vim.deepcopy diagnostics-ui))
   (vim.lsp.enable servers))

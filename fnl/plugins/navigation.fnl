@@ -27,6 +27,7 @@
   :opts {:winopts {:preview {:layout :vertical}}}
   :keys [[:<leader>ff (cmd$ "FzfLua files") :desc "Find files"]
          [:<leader>fb (cmd$ "FzfLua buffers") :desc "Find buffers"]
+         [:<leader>fs (cmd$ "FzfLua resume") :desc "Resume previous find"]
          [:<leader>ss
           (cmd$ "FzfLua lsp_document_symbols")
           :desc
@@ -37,7 +38,8 @@
           :desc
           "Search for a symbol in project"]
          [:<leader>sg (cmd$ "FzfLua live_grep") :desc "Grep project"]
-         [:<leader>/ (cmd$ "FzfLua blines") :desc "Search here"]]}
+         [:<leader>/ (cmd$ "FzfLua blines") :desc "Search here"]
+         [:<leader>df (cmd$ "FzfLua diagnostics_document") :desc "File Diagnostics"]]}
  {1 :andymass/vim-matchup}
  {1 :MagicDuck/grug-far.nvim
   :opts {:headerMaxWidth 80}
