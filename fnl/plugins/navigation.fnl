@@ -39,7 +39,10 @@
           "Search for a symbol in project"]
          [:<leader>sg (cmd$ "FzfLua live_grep") :desc "Grep project"]
          [:<leader>/ (cmd$ "FzfLua blines") :desc "Search here"]
-         [:<leader>df (cmd$ "FzfLua diagnostics_document") :desc "File Diagnostics"]]}
+         [:<leader>df
+          (cmd$ "FzfLua diagnostics_document")
+          :desc
+          "File Diagnostics"]]}
  {1 :andymass/vim-matchup}
  {1 :MagicDuck/grug-far.nvim
   :opts {:headerMaxWidth 80}

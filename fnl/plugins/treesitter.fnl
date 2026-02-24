@@ -7,7 +7,7 @@
             ((. (require :nvim-treesitter.configs) :setup) opts)
             (let [parser-config ((. (require :nvim-treesitter.parsers)
                                     :get_parser_configs))
-                  shik-parser-path (vim.fn.expand "~/Develop/shik/docs/treesitter")]
+                  shik-parser-path (vim.fn.expand "~/Develop/shik-treesitter")]
 
               (vim.filetype.add {:extension {:shk :shik}})
               (let [rtp (vim.api.nvim_get_option :runtimepath)]
