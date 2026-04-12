@@ -8,4 +8,10 @@
 (fn is-dir [path]
   (exists (.. path :/)))
 
-{: exists : is-dir}
+(fn shell-cmd [cmd]
+  (let [output (vim.fn.system cmd)]
+    (if (= vim.v.shell_error 0)
+      (string.sub output 1 -2)
+      (vim.notify (.. "Command failed: " output) vim.log.levels.ERROR))))
+
+{: exists : is-dir : shell-cmd}

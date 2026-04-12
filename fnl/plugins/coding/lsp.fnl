@@ -11,9 +11,10 @@
         :ts_ls {:on_attach (fn [client]
                              (set client.server_capabilities.documentFormattingProvider
                                   false))
-                :init_options {:importModuleSpecifierPreference :relative}}})
+                :init_options {:importModuleSpecifierPreference :relative}}
+        :gopls {}})
 
-(local servers [:hls :ts_ls :eslint :rust_analyzer])
+(local servers [:hls :ts_ls :eslint :rust_analyzer :gopls])
 
 ;; Config
 
