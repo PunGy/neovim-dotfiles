@@ -39,13 +39,19 @@
                      :clangd {:cmd [:clangd :--background-index :--clang-tidy]}
                      :marksman {:on_attach (fn [client]
                                              (if (pcall require :zk)
-                                                 (client.stop)))}}
+                                                 (client.stop)))}
+                     :hls {:settings {:haskell {:formattingProvider :fourmolu}}}}
            :setup {:arduino_language_server (fn [server]
-                                              ((. (require :lspconfig) server :setup) {:cmd [:arduino-language-server
-                                                                                      :-clangd :/usr/bin/clangd
-                                                                                      :-cli :/home/pungy/.local/share/bin/arduino-cli
-                                                                                      :-cli-config :/home/pungy/.arduino15/arduino-cli.yaml
-                                                                                      :-fqbn :arduino:avr:uno]}))}})
+                                              ((. (require :lspconfig) server
+                                                  :setup) {:cmd [:arduino-language-server
+                                                                 :-clangd
+                                                                 :/usr/bin/clangd
+                                                                 :-cli
+                                                                 :/home/pungy/.local/share/bin/arduino-cli
+                                                                 :-cli-config
+                                                                 :/home/pungy/.arduino15/arduino-cli.yaml
+                                                                 :-fqbn
+                                                                 "arduino:avr:uno"]}))}})
   ;; Almost entirely copied form LazyVim - refactor to be more simple and lispy
   :config (fn [_ opts]
             (local {: servers} opts)
@@ -122,6 +128,8 @@
                             ;; Microcontrollers
                             :arduino-language-server
                             :asm-lsp
+                            ;; rescript
+                            :rescript-language-server
                             ;; C/CPP
                             :clangd
                             :clang-format
@@ -138,6 +146,8 @@
                             ;;:tailwindcss-language-server
                             :typescript-language-server
                             :css-lsp
+                            :html-lsp
+                            :emmet-language-server
                             :eslint-lsp
                             :astro-language-server
                             ;; Python
@@ -167,14 +177,13 @@
                      (vim.defer_fn (fn []
                                      ((. (require :lazy.core.handler.event)
                                          :trigger) {:buf (vim.api.nvim_get_current_buf)
-                                                                                                                                :event :FileType}))
+                                                    :event :FileType}))
                        100)))
             (mr.refresh (fn []
                           (each [_ tool (ipairs opts.ensure_installed)]
                             (local p (mr.get_package tool))
                             (when (not (p:is_installed)) (p:install))))))}
- {1 :williamboman/mason-lspconfig.nvim
-  :version :^1.0.0}
+ {1 :williamboman/mason-lspconfig.nvim :version :^1.0.0}
  {1 :jay-babu/mason-nvim-dap.nvim
   :event [:VeryLazy]
   :dependencies [:williamboman/mason.nvim :mfussenegger/nvim-dap]
@@ -198,6 +207,22 @@
  {1 :mfussenegger/nvim-dap}
  ;; Conjure
  {1 :Olical/conjure}
+ ;; 
+{
+  1 :Julian/lean.nvim
+  :event ["BufReadPre *.lean" "BufNewFile *.lean"]
+
+    ;-- 'nvim-telescope/telescope.nvim', -- for 2 Lean-specific pickers
+    ;-- 'andymass/vim-matchup',          -- for enhanced % motion behavior
+    ;-- 'andrewradev/switch.vim',        -- for switch support
+    ;-- 'tomtom/tcomment_vim',           -- for commenting
+
+  :opts {
+    :mappings true
+  }
+}
+ ;; html
+ {1 :olrtg/nvim-emmet}
  ;; Cmake
  {1 :Civitasv/cmake-tools.nvim :event [:VeryLazy]}
  ;; Formatting
@@ -244,13 +269,6 @@
             (map! [nxo] :S (plug$ :flash :treesitter)))}
  ;; Editing
  {1 :L3MON4D3/LuaSnip}
- {1 :ThePrimeagen/refactoring.nvim}
- {1 :echasnovski/mini.surround
-  :version "*"
-  :event [:VeryLazy]
-  :opts {:mappings {:add :gsa
-                    :delete :gsr
-                    :find :gsf
-                    :find_left :gsF
-                    :delete :gsr}}}]
-
+ {1 :andymass/vim-matchup}
+ {1 :andrewradev/switch.vim}
+ {1 :ThePrimeagen/refactoring.nvim}]

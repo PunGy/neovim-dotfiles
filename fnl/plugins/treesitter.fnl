@@ -59,6 +59,7 @@
                             :asm
                             ;; Misc
                             :diff
+                            :wgsl
                             :luap
                             :printf
                             :query
