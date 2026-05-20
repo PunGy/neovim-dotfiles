@@ -6,20 +6,26 @@
 (fn set-local! [opt val?]
   `(tset vim :opt_local ,(tostring opt) ,(if (= val? nil) true val?)))
 
-(fn map! [mode seq cmd desc?]
-  (lambda string-split [str]
-    (let [tbl []]
-      (string.gsub str "." (fn [c] (table.insert tbl c)))
-      tbl))
+(fn split-modes [mode]
+  (let [tbl []]
+    (string.gsub (tostring mode) "." (fn [c] (table.insert tbl c)))
+    tbl))
 
-  `(vim.keymap.set ,(string-split (tostring mode)) ,seq ,cmd ,(when (not (= nil desc?)) { :desc desc? })))
+(fn map! [mode lhs rhs ?opts]
+  `(vim.keymap.set ,(split-modes mode) ,lhs ,rhs ,(or ?opts {})))
 
 ;---
-; (plug! beep :setup {:x 20 :y 30})
-; >> require("beep").setup({ x = 20, y = 30})
+; (plug! :foo :bar {:x 1})
+; >> require("foo").bar({ x = 1 })
 ;---
-(fn plug! [plug path & opts]
-  `((. (require ,(tostring plug)) ,(if (= (type path) :table) (unpack path) path))
-    ,(unpack opts)))
+(fn plug! [plug method & args]
+  `((. (require ,(tostring plug)) ,(tostring method)) ,(unpack args)))
 
-{: set! : map! : plug! : set-local!}
+;---
+; (plug-setup! :foo {:x 1})
+; >> require("foo").setup({ x = 1 })
+;---
+(fn plug-setup! [plug ?opts]
+  `((. (require ,(tostring plug)) :setup) ,(or ?opts {})))
+
+{: set! : set-local! : map! : plug! : plug-setup!}

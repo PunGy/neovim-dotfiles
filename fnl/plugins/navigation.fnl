@@ -1,9 +1,10 @@
-(import-macros {: cmd$} :macros.exec)
 (import-macros {: plug!} :macros.vim)
+
+(local {: cmd} (require :utils.exec))
 
 [{1 :stevearc/oil.nvim
   :lazy false
-  :keys [[:<leader>e (cmd$ :Oil) :desc "Navigate file system"]]
+  :keys [[:<leader>e (cmd :Oil) :desc "Navigate file system"]]
   :opts {:default_file_explorer true
          :view_options {:show_hidden true}
          :keymaps {:g? {1 :actions.show_help :mode :n}
@@ -25,22 +26,22 @@
          :use_default_keymaps false}}
  {1 :ibhagwan/fzf-lua
   :opts {:winopts {:preview {:layout :vertical}}}
-  :keys [[:<leader>ff (cmd$ "FzfLua files") :desc "Find files"]
-         [:<leader>fb (cmd$ "FzfLua buffers") :desc "Find buffers"]
-         [:<leader>fs (cmd$ "FzfLua resume") :desc "Resume previous find"]
+  :keys [[:<leader>ff (cmd "FzfLua files") :desc "Find files"]
+         [:<leader>fb (cmd "FzfLua buffers") :desc "Find buffers"]
+         [:<leader>fs (cmd "FzfLua resume") :desc "Resume previous find"]
          [:<leader>ss
-          (cmd$ "FzfLua lsp_document_symbols")
+          (cmd "FzfLua lsp_document_symbols")
           :desc
           "Search for a symbol here"]
-         [:<leader>sb (cmd$ "FzfLua lines") :desc "Search in buffes"]
+         [:<leader>sb (cmd "FzfLua lines") :desc "Search in buffes"]
          [:<leader>sw
-          (cmd$ "FzfLua lsp_workspace_symbols")
+          (cmd "FzfLua lsp_workspace_symbols")
           :desc
           "Search for a symbol in project"]
-         [:<leader>sg (cmd$ "FzfLua live_grep") :desc "Grep project"]
-         [:<leader>/ (cmd$ "FzfLua blines") :desc "Search here"]
+         [:<leader>sg (cmd "FzfLua live_grep") :desc "Grep project"]
+         [:<leader>/ (cmd "FzfLua blines") :desc "Search here"]
          [:<leader>df
-          (cmd$ "FzfLua diagnostics_document")
+          (cmd "FzfLua diagnostics_document")
           :desc
           "File Diagnostics"]]}
  {1 :andymass/vim-matchup}

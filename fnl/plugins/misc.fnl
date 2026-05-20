@@ -10,6 +10,6 @@
   :opts #{:dir (.. (vim.fn.stdpath :state) :/sessions/) :need 0}}
  {1 :echasnovski/mini.bufremove
   :keys [[:<C-b>q
-          #((. (require :mini.bufremove) :delete) 0 false)
+          #(plug! :mini.bufremove :delete 0 false)
           :desc
           "Close buffer"]]}]

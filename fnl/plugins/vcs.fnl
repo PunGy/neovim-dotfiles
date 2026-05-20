@@ -1,15 +1,7 @@
-(import-macros {: cmd$ : term$} :macros.exec)
-(local {: is-dir} (require :utils.system))
+(import-macros {: map!} :macros.vim)
+
+(local {: cmd : term-cmd} (require :utils.exec))
 (local {: is-in-arcadia} (require :utils.yndx))
-
-
-(macro map! [mode seq cmd desc]
-  (lambda string-split [str]
-    (let [tbl []]
-      (string.gsub str "." (fn [c] (table.insert tbl c)))
-      tbl))
-
-  `(vim.keymap.set ,(string-split (tostring mode)) ,seq ,cmd ,{ :desc desc :silent true :buffer true }))
 
 ;; Common gitsigns config
 (local gitsigns-opts
@@ -29,41 +21,57 @@
         :on_attach (fn [bufnr]
                      (local gs (require :gitsigns))
 
-                     (map! n "]h" #(gs.nav_hunk :next) "Next hunk")
-                     (map! n "[h" #(gs.nav_hunk :prev) "Prev hunk")
-                     (map! nv :<leader>vs
-                           (cmd$ ":Gitsigns stage_hunk") "Stage Hunk")
-                     (map! nv :<leader>vr
-                           (cmd$ ":Gitsigns reset_hunk") "Reset Hunk")
+                     (map! n "]h" #(gs.nav_hunk :next)
+                           {:desc "Next hunk" :silent true :buffer true})
+                     (map! n "[h" #(gs.nav_hunk :prev)
+                           {:desc "Prev hunk" :silent true :buffer true})
+                     (map! nv :<leader>vs (cmd ":Gitsigns stage_hunk")
+                           {:desc "Stage Hunk" :silent true :buffer true})
+                     (map! nv :<leader>vr (cmd ":Gitsigns reset_hunk")
+                           {:desc "Reset Hunk" :silent true :buffer true})
                      (map! n :<leader>vS gs.stage_buffer
-                           "Stage Buffer")
+                           {:desc "Stage Buffer" :silent true :buffer true})
                      (map! n :<leader>vu gs.undo_stage_hunk
-                           "Undo Stage Hunk")
+                           {:desc "Undo Stage Hunk"
+                            :silent true
+                            :buffer true})
                      (map! n :<leader>vR gs.reset_buffer
-                           "Reset Buffer")
+                           {:desc "Reset Buffer" :silent true :buffer true})
                      (map! n :<leader>vp gs.preview_hunk_inline
-                           "Preview Hunk Inline")
-                     (map! n :<leader>vb
-                           #(gs.blame_line {:full true}) "Blame Line")
-                     (map! n :<leader>vB #(gs.blame) "Blame Buffer")
-                     (map! n :<leader>vd gs.diffthis "Diff This")
+                           {:desc "Preview Hunk Inline"
+                            :silent true
+                            :buffer true})
+                     (map! n :<leader>vb #(gs.blame_line {:full true})
+                           {:desc "Blame Line" :silent true :buffer true})
+                     (map! n :<leader>vB #(gs.blame)
+                           {:desc "Blame Buffer" :silent true :buffer true})
+                     (map! n :<leader>vd gs.diffthis
+                           {:desc "Diff This" :silent true :buffer true})
                      (map! n :<leader>vD #(gs.diffthis "~")
-                           "Diff This ~")
-                     (map! ox :ih (cmd$ ":<C-U>Gitsigns select_hunk")
-                           "GitSigns Select Hunk")
+                           {:desc "Diff This ~" :silent true :buffer true})
+                     (map! ox :ih (cmd ":<C-U>Gitsigns select_hunk")
+                           {:desc "GitSigns Select Hunk"
+                            :silent true
+                            :buffer true})
                      ;; Git management commands
                      (map! n :<leader>vms
-                           (term$ "git add . && git commit -m $(timestamp) && git push")
-                           "Save changes and push")
-                     (map! n :<leader>vmP
-                           (term$ "git push")
-                           "Push")
-                     (map! n :<leader>vmp (term$ "git pull")
-                           "Pull")
-                     (map! n :<leader>vmh (term$ "git stash")
-                           "Stash changes (hide)")
-                     (map! n :<leader>vmu (term$ "git stash pop")
-                           "Unstash changes (unhide)"))})
+                           (term-cmd
+                             "git add . && git commit -m $(timestamp) && git push")
+                           {:desc "Save changes and push"
+                            :silent true
+                            :buffer true})
+                     (map! n :<leader>vmP (term-cmd "git push")
+                           {:desc "Push" :silent true :buffer true})
+                     (map! n :<leader>vmp (term-cmd "git pull")
+                           {:desc "Pull" :silent true :buffer true})
+                     (map! n :<leader>vmh (term-cmd "git stash")
+                           {:desc "Stash changes (hide)"
+                            :silent true
+                            :buffer true})
+                     (map! n :<leader>vmu (term-cmd "git stash pop")
+                           {:desc "Unstash changes (unhide)"
+                            :silent true
+                            :buffer true}))})
 
 ;; IF arcadia mounted AND we are inside mounted instance - load arc vcs
 (if (is-in-arcadia)

@@ -26,7 +26,7 @@ local function _2_()
       return nil
     end
   end
-  vim.keymap.set({"n"}, "<A-n>", _5_)
+  vim.keymap.set({"n"}, "<A-n>", _5_, {})
   local function _7_()
     return require("zk.commands").get("ZkNotes")()
   end
@@ -47,10 +47,10 @@ local function _2_()
     return require("zk.commands").get("ZkNew")({group = "daily", dir = "daily"})
   end
   vim.keymap.set({"n"}, "<localleader>d", _11_, {desc = "Open daily note"})
-  vim.keymap.set({"n", "i"}, "<A-;>", insert_timestamp)
+  vim.keymap.set({"n", "i"}, "<A-;>", insert_timestamp, {})
   local function _12_()
     return make_list("new-list")
   end
-  return vim.keymap.set({"n", "i"}, "<A-o>", _12_)
+  return vim.keymap.set({"n", "i"}, "<A-o>", _12_, {})
 end
 return {"zk-org/zk-nvim", lazy = not is_dir((vim.fn.getcwd() .. "/.zk")), config = _2_}

@@ -1,4 +1,4 @@
-(import-macros {: plug! : map! } :macros.vim)
+(import-macros {: map! : plug-setup!} :macros.vim)
 
 (local {: is-dir} (require :utils.system))
 
@@ -20,20 +20,23 @@
 
            (macro zkcmd! [cmd opts]
              `(((. (require :zk.commands) :get) ,cmd) ,opts))
-           (plug! :zk :setup
-                  {:picker :fzf_lua :lsp {:config {:cmd [:zk :lsp] :name :zk}}})
+           (plug-setup! :zk
+                        {:picker :fzf_lua
+                         :lsp {:config {:cmd [:zk :lsp] :name :zk}}})
 
            (map! n :<A-n>
                  (fn []
                    (let [title (vim.fn.input "Title: ")]
                      (when (not= title "")
                        (zkcmd! :ZkNew {: title})))))
-           (map! n :<localleader>f #(zkcmd! :ZkNotes) "Find note by name")
-           (map! n :<localleader>t #(zkcmd! :ZkTags) "Notes by tag")
+           (map! n :<localleader>f #(zkcmd! :ZkNotes) {:desc "Find note by name"})
+           (map! n :<localleader>t #(zkcmd! :ZkTags) {:desc "Notes by tag"})
            (map! n :<localleader>b #(zkcmd! :ZkBacklinks)
-                 "Find links to this note")
-           (map! n :<localleader>l #(zkcmd! :ZkLinks) "Show links in this note")
-           (map! n :<localleader>d #(zkcmd! :ZkNew {:group :daily :dir :daily})
-                 "Open daily note")
+                 {:desc "Find links to this note"})
+           (map! n :<localleader>l #(zkcmd! :ZkLinks)
+                 {:desc "Show links in this note"})
+           (map! n :<localleader>d
+                 #(zkcmd! :ZkNew {:group :daily :dir :daily})
+                 {:desc "Open daily note"})
            (map! ni "<A-;>" insert-timestamp)
            (map! ni :<A-o> #(make-list :new-list)))}
