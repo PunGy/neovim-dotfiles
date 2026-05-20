@@ -9,52 +9,51 @@
     {:group (augroup :highlight-yank)
      :callback #(vim.hl.on_yank)})
 
-;; LSP buffer-local maps and features
+;; LSP buffer-local maps and features.
+;;
+;; `bmap!` is defined here as a local macro that captures `bufnr` from the
+;; surrounding `let` by free reference — each call expands at compile time to
+;; a single `vim.keymap.set` form. No runtime closure, no helper function.
 (fn on-lsp-attach [args]
   (let [bufnr args.buf
         client (vim.lsp.get_client_by_id args.data.client_id)]
-    (fn map [lhs rhs desc]
-      (vim.keymap.set :n lhs rhs {:buffer bufnr :silent true :desc desc}))
+    (macro bmap! [lhs rhs desc]
+      `(vim.keymap.set :n ,lhs ,rhs
+                       {:buffer bufnr :silent true :desc ,desc}))
 
-    ;; Hover with rounded border (overrides 0.11 default K mapping).
-    (map :K
-         #(vim.lsp.buf.hover {:border :rounded})
-         "Hover docs")
+    (bmap! :K
+           #(vim.lsp.buf.hover {:border :rounded})
+           "Hover docs")
 
-    (map :<leader>cf
-         #(plug! :conform :format {:bufnr bufnr :lsp_fallback true})
-         "Format buffer")
+    (bmap! :<leader>cf
+           #(plug! :conform :format {:bufnr bufnr :lsp_fallback true})
+           "Format buffer")
 
-    (map :<leader>cl vim.lsp.codelens.run "Run code lens")
+    (bmap! :<leader>cl vim.lsp.codelens.run "Run code lens")
 
-    (map :<leader>th
-         (fn []
-           (let [filter {:bufnr bufnr}
-                 enabled? (vim.lsp.inlay_hint.is_enabled filter)]
-             (vim.lsp.inlay_hint.enable (not enabled?) filter)))
-         "Toggle inlay hints")
+    (bmap! :<leader>th
+           (fn []
+             (let [filter {:bufnr bufnr}
+                   enabled? (vim.lsp.inlay_hint.is_enabled filter)]
+               (vim.lsp.inlay_hint.enable (not enabled?) filter)))
+           "Toggle inlay hints")
 
-    (map :<leader>tl
-         (fn []
-           (let [current (or (?. (vim.diagnostic.config) :virtual_lines) false)]
-             (vim.diagnostic.config {:virtual_lines (not current)})))
-         "Toggle virtual_lines diagnostics")
+    (bmap! :<leader>tl
+           (fn []
+             (let [current (or (?. (vim.diagnostic.config) :virtual_lines) false)]
+               (vim.diagnostic.config {:virtual_lines (not current)})))
+           "Toggle virtual_lines diagnostics")
 
-    ;; LSP-driven folding (outline-mode style) when server supports it.
+    ;; LSP folding when the server advertises foldingRange. foldlevelstart=99
+    ;; (in config.fnl) keeps folds open on load — use z*/zc/zM to operate.
     (when (and client (client:supports_method :textDocument/foldingRange))
-      (set vim.wo.foldexpr "v:lua.vim.lsp.foldexpr()")
-      (set vim.wo.foldmethod :expr))))
+      (set vim.wo.foldmethod :expr)
+      (set vim.wo.foldexpr "v:lua.vim.lsp.foldexpr()"))
+
+    (when (and client (client:supports_method :textDocument/codeLens))
+      (vim.lsp.codelens.enable true {:bufnr bufnr}))))
 
 (au :LspAttach {:group (augroup :lsp-attach) :callback on-lsp-attach})
-
-;; Auto-refresh codelens for buffers whose attached clients support it.
-(au [:BufEnter :CursorHold :InsertLeave]
-    {:group (augroup :lsp-codelens-refresh)
-     :callback (fn [args]
-                 (when (next (vim.lsp.get_clients
-                               {:bufnr args.buf
-                                :method :textDocument/codeLens}))
-                   (vim.lsp.codelens.refresh {:bufnr args.buf})))})
 
 ;; Restore cursor position on file open
 (au :BufReadPost

@@ -58,6 +58,13 @@
 ;; Minimum number of screen lines to keep above and below the cursor
 (set! signcolumn :yes)
 
+;; Folding: define folds via providers (LSP/treesitter) but keep them open on
+;; buffer load. foldlevelstart=99 overrides foldlevel on BufRead so files don't
+;; open pre-folded; foldenable keeps `zc`/`zo` etc. usable.
+(set! foldenable)
+(set! foldlevel 99)
+(set! foldlevelstart 99)
+
 ;; Always show the sign column to avoid text shifting
 (set! list)
 

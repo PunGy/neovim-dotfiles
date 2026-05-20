@@ -18,6 +18,9 @@ vim["opt"]["undofile"] = true
 vim["opt"]["incsearch"] = true
 vim["opt"]["scrolloff"] = 8
 vim["opt"]["signcolumn"] = "yes"
+vim["opt"]["foldenable"] = true
+vim["opt"]["foldlevel"] = 99
+vim["opt"]["foldlevelstart"] = 99
 vim["opt"]["list"] = true
 local space = "\194\183"
 return vim.opt.listchars:append({nbsp = space, tab = "\194\183 ", trail = space})

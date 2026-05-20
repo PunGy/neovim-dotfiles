@@ -5,8 +5,11 @@
   :event :VeryLazy
   :config (fn [] (plug-setup! :nvim-surround))}
  ;; Treesitter text-object queries (@function.outer etc.). No keymaps here —
- ;; mini.ai owns selection; mini.bracketed owns generic node motion.
+ ;; mini.ai owns selection; mini.bracketed owns generic node motion. We don't
+ ;; call setup() because mini.ai reads queries/<lang>/textobjects.scm straight
+ ;; off the runtime path; the plugin only needs to be in rtp.
  {1 :nvim-treesitter/nvim-treesitter-textobjects
+  :branch :main
   :dependencies [:nvim-treesitter/nvim-treesitter]
   :event :VeryLazy}
  {1 :echasnovski/mini.ai

@@ -1,9 +1,17 @@
 -- [nfnl] fnl/plugins/treesitter.fnl
-local function _1_(_, opts)
-  return require("nvim-treesitter.configs").setup(opts)
+local _local_1_ = require("utils.augroup")
+local augroup = _local_1_.augroup
+local au = vim.api.nvim_create_autocmd
+local ensure_installed = {"html", "javascript", "jsdoc", "tsx", "typescript", "css", "astro", "http", "scss", "svelte", "toml", "json", "jsonc", "xml", "yaml", "markdown", "markdown_inline", "latex", "vimdoc", "luadoc", "bash", "lua", "python", "java", "commonlisp", "c", "cmake", "make", "cpp", "go", "rust", "sql", "fennel", "asm", "haskell", "wgsl", "diff", "luap", "printf", "query", "regex", "vim", "gitignore"}
+local function _2_()
+  do
+    local ts = require("nvim-treesitter")
+    ts.setup()
+    ts.install(ensure_installed)
+  end
+  local function _3_(args)
+    return pcall(vim.treesitter.start, args.buf)
+  end
+  return au("FileType", {group = augroup("treesitter-start"), callback = _3_})
 end
-local function _2_(plugin)
-  require("lazy.core.loader").add_to_rtp(plugin)
-  return require("nvim-treesitter.query_predicates")
-end
-return {{"nvim-treesitter/nvim-treesitter", build = ":TSUpdate", cmd = {"TSUpdateSync", "TSUpdate", "TSInstall"}, dependencies = {"pungy/shik-treesitter"}, pin = true, config = _1_, init = _2_, opts = {ensure_installed = {"html", "javascript", "jsdoc", "tsx", "typescript", "css", "astro", "http", "scss", "svelte", "toml", "json", "jsonc", "xml", "yaml", "markdown", "markdown_inline", "latex", "vimdoc", "luadoc", "bash", "lua", "python", "java", "commonlisp", "c", "cmake", "make", "cpp", "go", "rust", "sql", "fennel", "asm", "haskell", "wgsl", "diff", "luap", "printf", "query", "regex", "vim", "shik", "gitignore"}, highlight = {enable = true, additional_vim_regex_highlighting = {"markdown"}}, indent = {enable = true}}, opts_extend = {"ensure_installed"}, lazy = false, version = false}}
+return {{"nvim-treesitter/nvim-treesitter", branch = "main", build = ":TSUpdate", config = _2_, lazy = false}}

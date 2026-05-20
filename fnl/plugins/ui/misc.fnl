@@ -3,11 +3,7 @@
 [;; Icons
  {1 :nvim-tree/nvim-web-devicons}
  {1 :echasnovski/mini.icons}
- ;; Snacks: opt-in modules only (no dashboard/explorer/notifier).
  ;; bigfile + quickfile need early load to intercept the very first BufReadPre.
- ;; image: doc.inline renders ![]() in markdown/latex; the standalone image
- ;; viewer takes over when you open a png/jpg/svg as a buffer (works with Oil
- ;; <CR>) — that path needs no extra opts, just the Kitty graphics protocol.
  {1 :folke/snacks.nvim
   :priority 1000
   :lazy false
@@ -36,7 +32,9 @@
  ;; Misc
  {; highlight color of the
   1 :brenoprata10/nvim-highlight-colors
-  :keys [[:<leader>uc #(plug! :nvim-highlight-colors :toggle)]]}
+  :keys [{1 :<leader>uc
+          2 #(plug! :nvim-highlight-colors :toggle)
+          :desc "Toggle color highlights"}]}
  ; Completion (snippets via built-in vim.snippet; no friendly-snippets)
  {1 :saghen/blink.cmp
   :version :1.*
@@ -56,4 +54,4 @@
                                                         {1 :kind_icon 2 :kind}]}}}}}}
  ; History of changes for the buffer
  {1 :mbbill/undotree
-  :keys [[:<leader>h vim.cmd.UndotreeToggle :desc "Show buffer history"]]}]
+  :keys [{1 :<leader>h 2 vim.cmd.UndotreeToggle :desc "Show buffer history"}]}]

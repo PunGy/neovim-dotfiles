@@ -9,24 +9,21 @@ au("TextYankPost", {group = augroup("highlight-yank"), callback = _2_})
 local function on_lsp_attach(args)
   local bufnr = args.buf
   local client = vim.lsp.get_client_by_id(args.data.client_id)
-  local function map(lhs, rhs, desc)
-    return vim.keymap.set("n", lhs, rhs, {buffer = bufnr, silent = true, desc = desc})
-  end
   local function _3_()
     return vim.lsp.buf.hover({border = "rounded"})
   end
-  map("K", _3_, "Hover docs")
+  vim.keymap.set("n", "K", _3_, {buffer = bufnr, desc = "Hover docs", silent = true})
   local function _4_()
     return require("conform").format({bufnr = bufnr, lsp_fallback = true})
   end
-  map("<leader>cf", _4_, "Format buffer")
-  map("<leader>cl", vim.lsp.codelens.run, "Run code lens")
+  vim.keymap.set("n", "<leader>cf", _4_, {buffer = bufnr, desc = "Format buffer", silent = true})
+  vim.keymap.set("n", "<leader>cl", vim.lsp.codelens.run, {buffer = bufnr, desc = "Run code lens", silent = true})
   local function _5_()
     local filter = {bufnr = bufnr}
     local enabled_3f = vim.lsp.inlay_hint.is_enabled(filter)
     return vim.lsp.inlay_hint.enable(not enabled_3f, filter)
   end
-  map("<leader>th", _5_, "Toggle inlay hints")
+  vim.keymap.set("n", "<leader>th", _5_, {buffer = bufnr, desc = "Toggle inlay hints", silent = true})
   local function _6_()
     local current
     local _8_
@@ -41,25 +38,20 @@ local function on_lsp_attach(args)
     current = (_8_ or false)
     return vim.diagnostic.config({virtual_lines = not current})
   end
-  map("<leader>tl", _6_, "Toggle virtual_lines diagnostics")
+  vim.keymap.set("n", "<leader>tl", _6_, {buffer = bufnr, desc = "Toggle virtual_lines diagnostics", silent = true})
   if (client and client:supports_method("textDocument/foldingRange")) then
-    vim.wo.foldexpr = "v:lua.vim.lsp.foldexpr()"
     vim.wo.foldmethod = "expr"
-    return nil
+    vim.wo.foldexpr = "v:lua.vim.lsp.foldexpr()"
+  else
+  end
+  if (client and client:supports_method("textDocument/codeLens")) then
+    return vim.lsp.codelens.enable(true, {bufnr = bufnr})
   else
     return nil
   end
 end
 au("LspAttach", {group = augroup("lsp-attach"), callback = on_lsp_attach})
-local function _11_(args)
-  if next(vim.lsp.get_clients({bufnr = args.buf, method = "textDocument/codeLens"})) then
-    return vim.lsp.codelens.refresh({bufnr = args.buf})
-  else
-    return nil
-  end
-end
-au({"BufEnter", "CursorHold", "InsertLeave"}, {group = augroup("lsp-codelens-refresh"), callback = _11_})
-local function _13_()
+local function _12_()
   local ft = vim.bo.filetype
   local line = vim.fn.line("'\"")
   local last = vim.fn.line("$")
@@ -69,8 +61,8 @@ local function _13_()
     return nil
   end
 end
-au("BufReadPost", {group = augroup("restore-cursor"), callback = _13_})
-local function _15_()
+au("BufReadPost", {group = augroup("restore-cursor"), callback = _12_})
+local function _14_()
   return vim.opt_local.iskeyword:append({"-", "?", "!"})
 end
-return au("FileType", {group = augroup("lisp-ft"), pattern = {"fennel", "lisp", "clojure", "scheme", "commonlisp"}, callback = _15_})
+return au("FileType", {group = augroup("lisp-ft"), pattern = {"fennel", "lisp", "clojure", "scheme", "commonlisp"}, callback = _14_})
