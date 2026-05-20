@@ -42,8 +42,11 @@ local function _3_(bufnr)
   return vim.keymap.set({"n"}, "<leader>vmu", term_cmd("git stash pop"), {desc = "Unstash changes (unhide)", silent = true, buffer = true})
 end
 gitsigns_opts = {signs = {add = {text = "\226\150\142"}, change = {text = "\226\150\142"}, delete = {text = "\239\131\154"}, topdelete = {text = "\239\131\154"}, changedelete = {text = "\226\150\142"}, untracked = {text = "\226\150\142"}}, numhl = true, current_line_blame = true, current_line_blame_opts = {virt_text = true, virt_text_pos = "eol", delay = 500, virt_text_priority = 100, ignore_whitespace = false}, on_attach = _3_}
-if is_in_arcadia() then
-  return {dir = "~/arcadia/contrib/tier1/gitsigns.arc.nvim", dev = true, opts = gitsigns_opts}
-else
-  return {"lewis6991/gitsigns.nvim", opts = gitsigns_opts}
+local function _9_(...)
+  if is_in_arcadia() then
+    return {dir = "~/arcadia/contrib/tier1/gitsigns.arc.nvim", dev = true, opts = gitsigns_opts}
+  else
+    return {"lewis6991/gitsigns.nvim", opts = gitsigns_opts}
+  end
 end
+return {_9_(...)}

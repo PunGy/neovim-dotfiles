@@ -1,6 +1,7 @@
 (import-macros {: set!} :macros.vim)
 
 (require :keymaps)
+(require :autocmds)
 
 ;; Number of spaces that a <Tab> in the file counts for
 (set! tabstop 2)

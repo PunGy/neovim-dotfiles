@@ -74,10 +74,10 @@
                             :buffer true}))})
 
 ;; IF arcadia mounted AND we are inside mounted instance - load arc vcs
-(if (is-in-arcadia)
-    ;; Patched gitsigns for arc vcs
-    {:dir "~/arcadia/contrib/tier1/gitsigns.arc.nvim"
-     :dev true
-     :opts gitsigns-opts}
-    ;; Plain gitsigns
-    {1 :lewis6991/gitsigns.nvim :opts gitsigns-opts})
+[(if (is-in-arcadia)
+     ;; Patched gitsigns for arc vcs
+     {:dir "~/arcadia/contrib/tier1/gitsigns.arc.nvim"
+      :dev true
+      :opts gitsigns-opts}
+     ;; Plain gitsigns
+     {1 :lewis6991/gitsigns.nvim :opts gitsigns-opts})]

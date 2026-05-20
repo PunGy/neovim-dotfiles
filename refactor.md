@@ -47,9 +47,11 @@ Each phase leaves the config in a working state.
 
 Neovim 0.11+ supports directory-based LSP config: drop one file per server under `lsp/<name>.lua` (or `lsp/<name>.fnl` compiled to lua) at runtimepath root, then `vim.lsp.enable({...})`. Cleaner than the configs-table and aligns with "fine-grained control."
 
-- Create `fnl/lsp/hls.fnl`, `ts_ls.fnl`, `eslint.fnl`, `rust_analyzer.fnl`, `gopls.fnl`. Each returns the server's table.
+- Create `lsp/hls.fnl`, `ts_ls.fnl`, `eslint.fnl`, `rust_analyzer.fnl`, `gopls.fnl`. Each returns the server's table; empty `{}` is a valid "I own this server, use lspconfig defaults" marker.
 - `plugins/coding/lsp.fnl` collapses to defaults + `(vim.lsp.enable [:hls :ts_ls :eslint :rust_analyzer :gopls])`.
-- **Wire blink.cmp capabilities** for every server: set globally with `(vim.lsp.config "*" {:capabilities (.. blink-caps)})` once at startup, so per-server files stay minimal.
+- **`:lazy false`, not `:event`.** `vim.lsp.enable` registers a `FileType` autocmd internally. If lspconfig lazy-loads on `BufReadPost`, the triggering buffer has already loaded and the autocmd registers too late for that buffer's first attach. Drop `:event` and `vim.schedule_wrap`; let it load at startup (the spec is just a defaults registry — startup cost is negligible).
+- **Wire blink.cmp capabilities** for every server: set globally with `(vim.lsp.config "*" {:capabilities (blink.get_lsp_capabilities)})` once at startup, so per-server files stay minimal.
+- Diagnostic float gets `:border :rounded`.
 - Keep `nvim-lspconfig` for sane defaults for now; it can be dropped later by providing `cmd`/`root_markers`/`filetypes` ourselves.
 
 ## Phase 5 — Autocmds layer (the missing module)
@@ -58,46 +60,55 @@ New `fnl/autocmds.fnl`, required from `config.fnl`. Add a small `utils/augroup.f
 
 - `TextYankPost` → `vim.hl.on_yank`.
 - `LspAttach` → buffer-local maps:
-  - `K` → `vim.lsp.buf.hover`
+  - `K` → `vim.lsp.buf.hover {:border :rounded}` (overrides 0.11 default).
   - 0.11 defaults `grn`/`gra`/`grr`/`gri` are kept implicitly.
-  - `<leader>cf` → format current buffer (conform first, else `vim.lsp.buf.format`).
+  - `<leader>cf` → `conform.format {:lsp_fallback true}` (one call; no pcall dance).
+  - `<leader>cl` → `vim.lsp.codelens.run`.
   - `<leader>th` → toggle inlay hints (`vim.lsp.inlay_hint.enable`).
   - `<leader>tl` → toggle `virtual_lines` diagnostics.
+  - If server supports `textDocument/foldingRange`: set `foldexpr = v:lua.vim.lsp.foldexpr()` / `foldmethod = expr` (outline-mode style folding).
+- One global autocmd refreshes codelens on `BufEnter`/`CursorHold`/`InsertLeave` for buffers whose attached clients advertise `textDocument/codeLens`.
 - `BufReadPost` → restore last cursor position (6-line snippet, no plugin).
 - `FileType {fennel,lisp}` → `lispwords`/`iskeyword` tweaks.
 - **No format-on-save.** Formatting stays manual via `<C-f>` (existing) and the new `<leader>cf` (LspAttach).
 
 ## Phase 6 — Plugin spec hygiene
 
-- Normalize every plugin file to return a vector (even single-plugin). Fix `notes.fnl`, `vcs.fnl`.
+- Normalize every plugin file to return a vector (even single-plugin). Fix `notes.fnl`, `vcs.fnl`, **`coding/formatting.fnl`** (also a bare table).
 - Resolve `:lazy false` + `:keys`/`:event` contradictions:
-  - `persistence.nvim`: drop `:lazy false`, rely on `:keys`.
-  - `treesitter.fnl`: drop `:event` (keep `:lazy false` — TS highlighting must boot on first paint).
-- Add `which-key.nvim` group registrations: `<leader>v` vcs, `<leader>f` find, `<leader>s` search, `<leader>u` ui, `<leader>d` diagnostics, `<C-b>` buffer, `<C-x>` exit/session.
-- Drop `rafamadriz/friendly-snippets` (see Phase 8 — switching to `vim.snippet`).
+  - **`persistence.nvim`: must KEEP `:lazy false`** — its `setup()` registers the `VimLeavePre` autocmd that saves the session on exit. Lazy-on-keys defers setup past every exit, silently breaking "restore last session". The plan was wrong on this one.
+  - `treesitter.fnl`: no `:event` to drop (current spec is `:lazy false` only). Skip.
+- Also fix the `#{...}` (Fennel set literal) in persistence opts — must be `{...}` (table). The `dir`/`need` opts were silently ignored before.
+- Add `which-key.nvim` v3 group registrations via `:opts.spec`:
+  - `<leader>c` code, `<leader>d` diagnostics, `<leader>f` find, `<leader>s` search, `<leader>t` toggle, `<leader>u` ui (+ `um` markdown), `<leader>v` vcs (+ `vm` manage), `<C-b>` buffer (+ `c` copy), `<C-x>` exit/session, `<localleader>` notes.
+- Drop `rafamadriz/friendly-snippets` (Phase 8 — switching to `vim.snippet`). Blink.cmp 1.x uses `vim.snippet` by default.
 
 ## Phase 7 — Keymap polish
 
 - `<Esc>` → `<Esc><Esc>` for `:nohlsearch`. Plain `<Esc>` untouched (avoids terminal/plugin friction).
 - Restore vim's `<C-a>` (increment). Move "select all" to `<leader>a`.
 - `<C-p>` paste-from-clipboard stays for now; document it.
-- Delete the local `map!` shadow in `vcs.fnl` (was needed only for `silent`/`buffer` defaults).
-- `<C-Tab>` close-tab: keep, but add `<leader>tq` fallback for SSH-into-tmux sessions.
+- Delete the local `map!` shadow in `vcs.fnl` (was needed only for `silent`/`buffer` defaults). — *done in Phase 3.*
+- `<C-Tab>` close-tab: keep, add **`<C-x>t`** fallback for SSH-into-tmux sessions. (Originally planned as `<leader>tq`, but `<leader>t` is the *toggle* group; close-tab fits better under the `<C-x>` exit/session group.)
+- **Buffer close moves to `<C-x>b`** (was `<C-b>q`). `<C-x>` becomes the universal close/exit prefix (`<C-x>q` quit, `<C-x>t` close tab, `<C-x>b` close buffer); `<C-b>` keeps only buffer-info ops (`cn`/`cp`/`o`).
+- **Which-key popup is suppressed while `<Esc>` is waiting** for its second press, via which-key v3's `defer` callback returning true when `ctx.keys == "<Esc>"`. Plain `<Esc>` keeps feeling instant; the `<Esc><Esc>` chain still resolves to `:noh`.
+- **Macros over raw require:** every `((. (require :X) :Y) args)` is now `(plug! :X :Y args)` or `(plug-setup! :X opts)`. Applied across `autocmds.fnl`, `plugins/coding/formatting.fnl`, `plugins/coding/misc.fnl`, `plugins/treesitter.fnl`.
 
 ## Phase 8 — Idiomatic additions (minimalist)
 
-- **`mini.ai`** — better in/around text objects (`vif`, `vic`, …).
-- **`mini.bufremove`** — replaces deleted `close-buffer`.
-- **`mini.bracketed`** — consolidates `]x`/`[x` motions. Replaces the `diagnostic-goto` factory.
-- **`nvim-treesitter-textobjects`** — `daf`/`vif`/`gnf`, pairs with mini.ai.
-- **`vim.snippet`** — built-in (0.10+). Drop `friendly-snippets`; rely on LSP-provided snippets through blink.cmp.
+- **`mini.ai`** — `af`/`if` function, `ac`/`ic` class, `ao`/`io` block/conditional/loop via `gen_spec.treesitter`. Lives in `plugins/coding/misc.fnl`.
+- **`mini.bufremove`** — replaces deleted `close-buffer`. Now bound to `<C-x>b`.
+- **`mini.bracketed`** — *promoted into Phase 4 work*. Consolidates `]x`/`[x` motions; replaces the `diagnostic-goto` factory and `utils/navigation.fnl`. Only severity-filtered jumps (`]e`/`]w`) stay as explicit `vim.diagnostic.jump` calls in `keymaps.fnl`. Disabled categories that clash with Vim/gitsigns: `file`, `indent`, `undo`.
+- **`nvim-treesitter-textobjects`** — installed as a dependency of `mini.ai` purely for the `queries/<lang>/textobjects.scm` files. No keymaps wired on its own (mini.ai owns selection; mini.bracketed owns generic node motion).
+- **`vim.snippet`** — built-in (0.10+). Dropped `friendly-snippets`; blink.cmp 1.x uses `vim.snippet` by default.
 - **Keep `nvim-surround`** (don't add `mini.surround`).
-- **Snacks modules** (modular, only what we want):
+- **Snacks modules** — opt-in only, no kitchen-sink:
   - `snacks.bigfile` — disables expensive features on huge files.
   - `snacks.quickfile` — faster first-paint on `nvim <file>`.
-  - `snacks.image` — inline image rendering for markdown/latex/html via Kitty graphics protocol. Works on Kitty/WezTerm. Preferred over `3rd/image.nvim` because it lives in a framework we're already taking, and needs no ImageMagick dep.
+  - `snacks.image` — inline images via Kitty graphics protocol; no ImageMagick dep. Works on Kitty/WezTerm.
+  - Loaded with `:lazy false :priority 1000` so bigfile/quickfile can intercept the very first `BufReadPre`.
 - **Inlay-hint toggle** and **virtual_lines toggle** (wired in Phase 5 LspAttach).
-- **`:Light`/`:Dark` user commands** to swap modus-themes at runtime — replaces the brittle `vim.env.THEME` check.
+- **`:Light`/`:Dark` user commands** — defined in `ui/theme.fnl`. Set `vim.o.background` and call `colorscheme`. Boot still consults `vim.env.THEME` (light → `:Light`, anything else → `:Dark`), but the env check is no longer load-bearing — it's just a default. Runtime swap costs zero plugin reload.
 
 ## Phase 9 — Documentation
 
@@ -108,6 +119,22 @@ Update `README.md`:
 - One-paragraph map of the directory layout.
 
 ---
+
+## Emacs-flavored additions
+
+Pulled from Emacs muscle memory. Each one is built into Neovim 0.11+/0.12; no third-party dep.
+
+- **Outline-mode style folding** — in `LspAttach`, when the server supports `textDocument/foldingRange`, set `foldexpr = v:lua.vim.lsp.foldexpr()` and `foldmethod = expr`. Gives `zM`/`zR`/`za` semantic folding for free, per buffer.
+- **Eldoc-style hover** — override `K` to `vim.lsp.buf.hover {:border :rounded}` in `LspAttach`. Cleaner popup, closer to `eldoc-mode`.
+- **Code lenses** — refresh on `BufEnter`/`CursorHold`/`InsertLeave` filtered by client method support; `<leader>cl` → `vim.lsp.codelens.run`. Replicates Emacs's `lsp-lens-mode` (test/run/references inline).
+- **Diagnostic float border** — `:float {:border :rounded :source :if_many}` in `vim.diagnostic.config`.
+- **Conform's built-in LSP fallback** — replace the `(pcall require :conform)` + formatter-list dance in `<leader>cf` with `conform.format {:bufnr bufnr :lsp_fallback true}`. One call, conform does the dispatch.
+- **`mini.bracketed`** (was Phase 8) — Emacs `next-error`/`previous-error`-style navigation, generalized: `]b`/`[b` buffers, `]d`/`[d` diagnostics, `]c`/`[c` comments, `]q`/`[q` quickfix, `]j`/`[j` jumplist, `]n`/`[n` treesitter nodes, `]y`/`[y` yank rotation, etc. Kills the `diagnostic-goto` factory and the whole `utils/navigation.fnl` module.
+
+Still candidate, not yet implemented:
+- **`vim.lsp.completion.enable`** — 0.12's native completion engine. Skipped because we already use `blink.cmp`. Worth revisiting only if `blink` becomes a maintenance burden.
+- **`:Inspect` / `:InspectTree` keymap** (`<leader>uI`?) — treesitter/highlight inspector, very `describe-thing-at-point`-y.
+- **`q:` command-line window** — already built-in, just worth surfacing in `which-key` doc.
 
 ## Deferred decisions
 

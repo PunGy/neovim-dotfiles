@@ -53,4 +53,4 @@ local function _2_()
   end
   return vim.keymap.set({"n", "i"}, "<A-o>", _12_, {})
 end
-return {"zk-org/zk-nvim", lazy = not is_dir((vim.fn.getcwd() .. "/.zk")), config = _2_}
+return {{"zk-org/zk-nvim", lazy = not is_dir((vim.fn.getcwd() .. "/.zk")), config = _2_}}

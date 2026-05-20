@@ -2,9 +2,9 @@
 
 (local {: is-dir} (require :utils.system))
 
-{1 :zk-org/zk-nvim
- :lazy (not (is-dir (.. (vim.fn.getcwd) :/.zk)))
- :config (fn []
+[{1 :zk-org/zk-nvim
+  :lazy (not (is-dir (.. (vim.fn.getcwd) :/.zk)))
+  :config (fn []
            (fn insert-timestamp []
              (let [timestamp (os.date "(%H:%M): ")]
                (vim.api.nvim_put [timestamp] :c true true)))
@@ -39,4 +39,4 @@
                  #(zkcmd! :ZkNew {:group :daily :dir :daily})
                  {:desc "Open daily note"})
            (map! ni "<A-;>" insert-timestamp)
-           (map! ni :<A-o> #(make-list :new-list)))}
+           (map! ni :<A-o> #(make-list :new-list)))}]

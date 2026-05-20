@@ -1,13 +1,14 @@
+(import-macros {: plug! : plug-setup!} :macros.vim)
+
 [{1 :nvim-treesitter/nvim-treesitter
   :build ":TSUpdate"
   :cmd [:TSUpdateSync :TSUpdate :TSInstall]
   :dependencies [:pungy/shik-treesitter]
   :lazy false
   :pin true
-  :config (fn [_ opts]
-            ((. (require :nvim-treesitter.configs) :setup) opts))
+  :config (fn [_ opts] (plug-setup! :nvim-treesitter.configs opts))
   :init (fn [plugin]
-          ((. (require :lazy.core.loader) :add_to_rtp) plugin)
+          (plug! :lazy.core.loader :add_to_rtp plugin)
           (require :nvim-treesitter.query_predicates))
   :opts {:ensure_installed [;; web
                             :html

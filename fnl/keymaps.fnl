@@ -2,13 +2,17 @@
 
 (local {: cmd} (require :utils.exec))
 (local {: is-in-arcadia : copy-arcadia-path} (require :utils.yndx))
-(local {: diagnostic-goto} (require :utils.navigation))
+
+(fn diag-jump [count severity]
+  (fn []
+    (vim.diagnostic.jump {: count
+                          :severity (?. vim.diagnostic.severity severity)})))
 
 (map! n :<C-x>q (cmd :qa) {:desc "Quit NeoVim"})
 (map! n :<C-x>Q (cmd :qall!) {:desc "Quit NeoVim"})
 
-;; Tabs
 (map! n :<C-Tab> (cmd :tabclose) {:desc "Close tab"})
+(map! n :<C-x>t (cmd :tabclose) {:desc "Close tab"})
 (map! n "]<Tab>" (cmd :tabnext) {:desc "Next tab"})
 (map! n "[<Tab>" (cmd :tabprev) {:desc "Prev tab"})
 
@@ -36,17 +40,17 @@
 (map! n :<leader>dl #(vim.diagnostic.open_float {:focusable true})
       {:desc "Line Diagnostics"})
 
-(map! n "]d" (diagnostic-goto true) {:desc "Next Diagnostic"})
-(map! n "[d" (diagnostic-goto false) {:desc "Prev Diagnostic"})
-(map! n "]e" (diagnostic-goto true :ERROR) {:desc "Next Error"})
-(map! n "[e" (diagnostic-goto false :ERROR) {:desc "Prev Error"})
-(map! n "]w" (diagnostic-goto true :WARN) {:desc "Next Warning"})
-(map! n "[w" (diagnostic-goto false :WARN) {:desc "Prev Warning"})
+;; ]d/[d come from mini.bracketed; severity-filtered jumps remain explicit.
+(map! n "]e" (diag-jump 1 :ERROR) {:desc "Next Error"})
+(map! n "[e" (diag-jump -1 :ERROR) {:desc "Prev Error"})
+(map! n "]w" (diag-jump 1 :WARN) {:desc "Next Warning"})
+(map! n "[w" (diag-jump -1 :WARN) {:desc "Prev Warning"})
 
 ;; Misc
 (map! nv :<C-y> "\"+y" {:desc "Copy to clipboard"})
 (map! nv :<C-p> "\"+p" {:desc "Paste from clipboard"})
-; select all
-(map! n :<C-a> :gg<S-v>G)
+;; <C-a> stays vim's increment; select-all moves to <leader>a.
+(map! n :<leader>a :gg<S-v>G {:desc "Select all"})
 
-(map! n :<Esc> (cmd :noh) {:desc "Clear selection"})
+;; Double-tap <Esc> to clear search highlight; single <Esc> stays untouched.
+(map! n :<Esc><Esc> (cmd :noh))

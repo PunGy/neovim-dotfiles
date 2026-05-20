@@ -1,5 +1,6 @@
 -- [nfnl] fnl/config.fnl
 require("keymaps")
+require("autocmds")
 vim["opt"]["tabstop"] = 2
 vim["opt"]["fixeol"] = true
 vim["opt"]["softtabstop"] = 2
