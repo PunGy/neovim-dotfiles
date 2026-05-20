@@ -1,8 +1,6 @@
 (import-macros {: cmd$ : term$} :macros.exec)
 (import-macros {: map!} :macros.vim)
 
-(local {: close-buffer : file-explorer} (require :utils.ui))
-
 (local {: is-in-arcadia : copy-arcadia-path} (require :utils.yndx))
 (local {: diagnostic-goto} (require :utils.navigation))
 
@@ -15,7 +13,6 @@
 (map! n "[<Tab>" (cmd$ :tabprev) "Prev tab")
 
 ;; Buffers
-(map! n :<C-b>q close-buffer "Close buffer")
 (map! n :<C-s> (cmd$ :w) "Save the buffer")
 
 (map! n :<C-b>cn (fn []

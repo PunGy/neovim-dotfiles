@@ -5,6 +5,8 @@
 ;; Number of spaces that a <Tab> in the file counts for
 (set! tabstop 2)
 
+(set! fixeol)
+
 ;; Number of spaces that a <Tab> counts for while performing editing operations
 (set! softtabstop 2)
 

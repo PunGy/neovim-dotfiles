@@ -3,7 +3,7 @@
   :cmd [:TSUpdateSync :TSUpdate :TSInstall]
   :dependencies [:pungy/shik-treesitter]
   :lazy false
-  :event [:BufReadPost :BufWritePost :BufNewFile :VeryLazy]
+  :pin true
   :config (fn [_ opts]
             ((. (require :nvim-treesitter.configs) :setup) opts))
   :init (fn [plugin]
@@ -48,6 +48,7 @@
                             :fennel
                             :asm
                             :haskell
+                            :wgsl
                             ;; Misc
                             :diff
                             :luap

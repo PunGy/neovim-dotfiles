@@ -7,4 +7,9 @@
           :desc
           "Restore last session"]
          [:<C-x>s #(plug! :persistence :select)]]
-  :opts #{:dir (.. (vim.fn.stdpath :state) :/sessions/) :need 0}}]
+  :opts #{:dir (.. (vim.fn.stdpath :state) :/sessions/) :need 0}}
+ {1 :echasnovski/mini.bufremove
+  :keys [[:<C-b>q
+          #((. (require :mini.bufremove) :delete) 0 false)
+          :desc
+          "Close buffer"]]}]
