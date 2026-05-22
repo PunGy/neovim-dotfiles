@@ -64,9 +64,6 @@
             (let [ts (require :nvim-treesitter)]
               (ts.setup)
               (ts.install ensure-installed))
-            ;; Highlights are no longer auto-enabled; start treesitter per
-            ;; buffer when a parser is available. pcall protects filetypes
-            ;; without a registered parser.
             (au :FileType
                 {:group (augroup :treesitter-start)
                  :callback (fn [args]

@@ -51,7 +51,10 @@
       (set vim.wo.foldexpr "v:lua.vim.lsp.foldexpr()"))
 
     (when (and client (client:supports_method :textDocument/codeLens))
-      (vim.lsp.codelens.enable true {:bufnr bufnr}))))
+      (vim.lsp.codelens.enable true {:bufnr bufnr}))
+
+    (when (and client (= client.name :ts_ls))
+      (set client.server_capabilities.documentFormattingProvider false))))
 
 (au :LspAttach {:group (augroup :lsp-attach) :callback on-lsp-attach})
 

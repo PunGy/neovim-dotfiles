@@ -45,13 +45,18 @@ local function on_lsp_attach(args)
   else
   end
   if (client and client:supports_method("textDocument/codeLens")) then
-    return vim.lsp.codelens.enable(true, {bufnr = bufnr})
+    vim.lsp.codelens.enable(true, {bufnr = bufnr})
+  else
+  end
+  if (client and (client.name == "ts_ls")) then
+    client.server_capabilities.documentFormattingProvider = false
+    return nil
   else
     return nil
   end
 end
 au("LspAttach", {group = augroup("lsp-attach"), callback = on_lsp_attach})
-local function _12_()
+local function _13_()
   local ft = vim.bo.filetype
   local line = vim.fn.line("'\"")
   local last = vim.fn.line("$")
@@ -61,8 +66,8 @@ local function _12_()
     return nil
   end
 end
-au("BufReadPost", {group = augroup("restore-cursor"), callback = _12_})
-local function _14_()
+au("BufReadPost", {group = augroup("restore-cursor"), callback = _13_})
+local function _15_()
   return vim.opt_local.iskeyword:append({"-", "?", "!"})
 end
-return au("FileType", {group = augroup("lisp-ft"), pattern = {"fennel", "lisp", "clojure", "scheme", "commonlisp"}, callback = _14_})
+return au("FileType", {group = augroup("lisp-ft"), pattern = {"fennel", "lisp", "clojure", "scheme", "commonlisp"}, callback = _15_})
