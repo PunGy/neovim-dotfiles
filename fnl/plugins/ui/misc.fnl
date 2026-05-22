@@ -1,4 +1,10 @@
 (import-macros {: plug!} :macros.vim)
+(fn render-blink-text [ctx]
+  (let [item ctx.item
+        ld (or item.labelDetails {})]
+    (or (and (= (type ld.description) :string) ld.description)
+        (and (= (type ld.detail) :string) ld.detail)
+        (and (= (type item.detail) :string) item.detail) "")))
 
 [;; Icons
  {1 :nvim-tree/nvim-web-devicons}
@@ -9,8 +15,7 @@
   :lazy false
   :opts {:bigfile {:enabled true}
          :quickfile {:enabled true}
-         :image {:enabled true
-                 :doc {:enabled true :inline true :float true}}}}
+         :image {:enabled true :doc {:enabled true :inline true :float true}}}}
  ;; Menus
  {1 :folke/which-key.nvim
   :event :VeryLazy
@@ -44,6 +49,10 @@
                   :<C-p> [:select_prev]
                   :<M-k> [:show_documentation :hide_documentation]
                   :<C-Enter> [:select_and_accept]}
+         :completion {:menu {:draw {:components {:label_description {:width {:max 60}
+                                                                     :text render-blink-text}}
+                                    :columns [{1 :label 2 :label_description :gap 1}
+                                              {1 :kind_icon 2 :kind}]}}}
          :cmdline {:enabled true
                    :keymap {:preset :inherit
                             :<M-Enter> [:select_accept_and_enter]}

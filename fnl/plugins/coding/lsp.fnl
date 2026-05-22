@@ -5,7 +5,7 @@
         :signs {:text [" " " " " " " "]}
         :underline true
         :update_in_insert false
-        :virtual_lines {:current_line true}
+        :virtual_lines {:current_line false}
         :virtual_text {:prefix "●" :source :if_many :spacing 4}
         :float {:border :rounded :source :if_many}})
 
